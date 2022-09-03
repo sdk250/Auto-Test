@@ -26,9 +26,9 @@ a.submit() # Submit information
 , `self.publisher` 为您本地化的 `value` <br>
 默认为本人的学校和发布机构<br>
 
-#FAQ
+# FAQ
 - Q: 为什么要用Python写?
-- A: 人生苦短，我用Python
+-- A: 人生苦短，我用Python
 
 - Q: 如何安装上述提到的软件包?
 - A: 前提需要你安装了 `Python 3.5 +` 然后输入 `pip3 install <package>`
