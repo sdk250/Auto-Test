@@ -12,7 +12,7 @@ from selenium.webdriver.common.by import By
 
 class Parse(object):
 	def __init__(self, **args):
-		self.log_path = "/home/sdk/Python/run.log"
+		self.log_path = "/tmp/parse-run.log"
 		self.TaskId = None
 		self.WFId = None
 		self.ProcessId = None
@@ -21,8 +21,13 @@ class Parse(object):
 		self.quest = None
 		self.key = "2knV5VGRTScU7pOq"
 		self.iv = "UmNWaNtM0PUdtFCs"
+		self.institution = "学生处"
+		self.publisher = "王娜"
+		self.longitude = "102.442694"
+		self.latitude = "24.882945"
+		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校"
 
-		self.runtime = open("runtime.log", "ab+")
+		self.runtime = open("parse-runtime.log", "ab+")
 		self.session = requests.session()
 		self.year = str(datetime.datetime.now().year)
 		self.month = str(datetime.datetime.now().strftime("%m"))
@@ -114,8 +119,10 @@ class Parse(object):
 		self.task = self.session.get(
 			url = "https://api.uyiban.com/officeTask/client/index/uncompletedList",
 			params = {
-				"StartTime": str(self.year) + "-" + str(self._month) + "-" + str(self._day) + " 00:00",
-				"EndTime": self.year + "-" + self.month + "-" + self.day + " 23:59",
+				"StartTime": str(self.year) + "-" + str(self._month) +
+					"-" + str(self._day) + " 00:00",
+				"EndTime": self.year + "-" + self.month +
+					"-" + self.day + " 23:59",
 				"CSRF": self.token
 			},
 			headers = self.headers,
@@ -190,9 +197,9 @@ class Parse(object):
 					self.quest["data"]["Form"][4]["id"]: "好",
 					self.quest["data"]["Form"][5]["id"]: {
 						"time": str(self.date),
-						"longitude": "102.442694",
-						"latitude": "24.882945",
-						"address": "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校"
+						"longitude": self.longitude,
+						"latitude": self.latitude,
+						"address": self.address
 					}
 				}, ensure_ascii = False),
 				"WfprocessId": self.ProcessId,
@@ -206,11 +213,11 @@ class Parse(object):
 						},
 						{
 							"label": "发布机构",
-							"value": "学生处"
+							"value": self.institution
 						},
 						{
 							"label": "发布人",
-							"value": "王娜"
+							"value": self.publisher
 						}
 					]
 				}, ensure_ascii = False),
@@ -229,11 +236,6 @@ class Parse(object):
 					"User-Agent": self.user_agent,
 					"Content-Type": "application/x-www-form-urlencoded",
 					"Content-Length": str(len(data_) + 3),
-					"sec-ch-ua": "",
-					"sec-ch-ua-mobile": "?1",
-					"Sec-Fetch-Site": "same-site",
-					"Sec-Fetch-Mode": "cors",
-					"Sec-Fetch-Dest": "empty",
 					"X-Requested-With": "com.yiban.app",
 					"Origin": "https://app.uyiban.com",
 					"Referer": "https://app.uyiban.com/",
