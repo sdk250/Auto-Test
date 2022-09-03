@@ -33,6 +33,10 @@ a.submit() # Submit information
 > - Q: 如何安装上述提到的软件包?
 >> - A: 前提需要你安装了 `Python 3.5 +` 然后输入 `pip3 install <package>`
 
+> - Q: 支持 `Windows` 吗?
+>> - A: 暂时没有时间，您可以自行修改适配 `Windows` 代码量几分钟就能完成
+
+
 
 ---
 # 使用须知
