@@ -4,7 +4,7 @@
 
 # 使用方法
 `Clone` 该仓库或下载仓库 `parse.py` 的raw到本地。<br>
-使用前请确保你的工作环境具有 `Chrome Driver` 和
+使用前请确保您的工作环境具有 `Chrome Driver` 和
 `python3-pip` 的软件包: `requests` , `pycryptodome` , `json` ,
 `selenium` , `base64` , `urllib` <br>
 然后在您的工作目录新建 `<item>.py` <br>
