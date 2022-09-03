@@ -8,7 +8,7 @@
 `selenium` , `base64` , `urllib` <br>
 然后在您的工作目录新建 `<item>.py` <br>
 并且键入<br>
-```
+```python
 from parse import Parse
 a = Parse(account = <Your Account>, password = <Your Password>)
 a.get_task() # Get quest id
