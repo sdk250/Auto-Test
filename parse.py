@@ -27,7 +27,7 @@ class Parse(object):
 		self.latitude = "24.882945"
 		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校"
 
-		self.runtime = open("parse-runtime.log", "ab+")
+		self.runtime = open("/tmp/parse-runtime.log", "ab+")
 		self.session = requests.session()
 		self.year = str(datetime.datetime.now().year)
 		self.month = str(datetime.datetime.now().strftime("%m"))
