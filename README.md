@@ -16,7 +16,20 @@ a.get_WFId() # Get WFId
 a.get_processid() # Get processid
 a.submit() # Submit information
 ```
-如果运行成功，程序将会在您的工作目录输入 `parse-runtime.log` 打卡日志。
-如果在运行时日志 `runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
-来查阅并解决错误。
-# 
+如果运行成功，程序将会在您的 `/tmp/parse-runtime.log` 打卡日志。
+如果您在运行时日志 `parse-runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
+来查阅并解决错误。<br>
+# 注意事项
+使用前请修改 `parse.py` 中 `self.longitude` , `self.latitude` , `self.address` , `self.institution`
+, `self.publisher` 为您本地化的 `value`<br>
+默认为本人的学校，和发布机构<br>
+---
+# 使用须知
+---
+本项目仅用于学习交流，如果您认为部分代码侵犯了您的权益，<br>
+请与我联系
+> Google Email: 520sdk250@gmail.com
+> QQ/TIM: 2094858273
+> Tel: 13085354260
+部分代码参考 [参考一](https://www.programminghunter.com/article/39181948028/) ,
+[参考二](https://gitee.com/ye-qiuming/nnu_yiban)
