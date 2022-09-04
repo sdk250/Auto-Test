@@ -27,11 +27,11 @@ a.submit() # Submit information
 目前仅提供 `Linux Branch` - `Debian` 的教程:<br>
 - 首先安装Crontab
 ```shell
-sudo apt install cronie -y
+$> sudo apt install cronie -y
 ```
 - 然后输入<br>
 ```shell
-crontab -e
+$> crontab -e
 ```
 - 继续输入<br>
 ```shell
