@@ -26,6 +26,7 @@ class Parse(object):
 		self.longitude = "102.442694"
 		self.latitude = "24.882945"
 		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校"
+		self.get_cookies_count = 0
 
 		self.runtime = open("/tmp/parse-runtime.log", "ab+")
 		self.session = requests.session()
@@ -64,6 +65,21 @@ class Parse(object):
 		self.opt.add_argument("user-agent=" + self.user_agent)
 		# opt.add_argument("--no-sandbox")
 
+		self.get_cookies()
+
+	def get_cookies(self):
+		self.get_cookies_count += 1
+		if self.get_cookies_count > 10:
+			print("\033[1;31m严重错误\033[0m")
+			self.runtime.write(
+				bytes(
+					"\n====\t====\t====\n" +
+					"Date: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
+					"\nTitle: 出现了严重错误" +
+					"\n====\t====\t====\n", encoding = "UTF-8"
+				)
+			)
+			self._quit()
 		self.driver = webdriver.Chrome(
 			options = self.opt,
 			service_log_path = self.log_path
@@ -91,7 +107,7 @@ class Parse(object):
 		self.upwd.send_keys(args["password"])
 		self.login.click()
 
-		time.sleep(4)
+		time.sleep(6)
 
 		self.set_cookies(
 			self.driver.get_cookie("PHPSESSID"),
@@ -102,10 +118,19 @@ class Parse(object):
 	def set_cookies(self, phpsessid, token, cpi):
 		if phpsessid is None:
 			print("\033[1;31mPHPSESSID is empty.\033[0m")
-		if token is None:
+			self.driver.quit()
+			self.get_cookies()
+			return False
+		elif token is None:
 			print("\033[1;31mCSRF_TOKEN is empty.\033[0m")
-		if cpi is None:
+			self.driver.quit()
+			self.get_cookies()
+			return False
+		elif cpi is None:
 			print("\033[1;31mCPI is empty.\033[0m")
+			self.driver.quit()
+			self.get_cookies()
+			return False
 		self.token = token["value"]
 		self.cookies = {
 			"is_certified": "1",
@@ -268,7 +293,6 @@ class Parse(object):
 					)
 				)
 			self._quit()
-			print("\033[1;32mAll Done.\033[0m")
 			return self.submit_
 		else:
 			print("Process is empty.")
@@ -277,7 +301,8 @@ class Parse(object):
 	def _quit(self):
 		self.driver.quit()
 		self.runtime.close()
-		print("exit")
+		quit()
+		print("\033[1;32mAll Done.\033[0m")
 
 	def encrypto_data(self, data, key, iv):
 		_data = json.dumps(data, ensure_ascii = False).replace(" ", "")
