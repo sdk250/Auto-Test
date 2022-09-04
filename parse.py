@@ -180,7 +180,7 @@ class Parse(object):
 			)
 			self.WFId = json.loads(self.wfid.text)["data"]["WFId"]
 			self.institution = json.loads(self.wfid.text)["data"]["PubOrgName"]
-			self.publisher = jsob.loads(self.wfid.text)["data"]["PubPersonName"]
+			self.publisher = json.loads(self.wfid.text)["data"]["PubPersonName"]
 			return self.wfid
 		else:
 			print("TaskId is empty.")
