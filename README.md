@@ -18,7 +18,7 @@ a.get_WFId() # Get WFId
 a.get_processid() # Get processid
 a.submit() # Submit information
 ```
-如果运行成功，程序将会在您的 `/tmp/parse-runtime.log` 目录输出运行时日志。<br>
+如果运行成功，程序将会在您的 `/tmp` 目录输出 `parse-runtime.log` 日志。<br>
 如果您在运行时日志 `parse-runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
 来查阅并解决错误。<br>
 
