@@ -284,7 +284,7 @@ class Parse(object):
 						"\n====\t====\t====\n" +
 						"Date: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
 						"\nTitle: " + self.Title +
-						"\nAccount: "
+						"\nAccount: " + self.account +
 						"\nTaskId: " + self.TaskId +
 						"\nWFId: " + self.WFId +
 						"\nProcessId: " + self.ProcessId +
