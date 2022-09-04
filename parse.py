@@ -21,8 +21,8 @@ class Parse(object):
 		self.quest = None
 		self.key = "2knV5VGRTScU7pOq"
 		self.iv = "UmNWaNtM0PUdtFCs"
-		self.institution = "学生处"
-		self.publisher = "王娜"
+		self.institution = None
+		self.publisher = None
 		self.longitude = "102.442694"
 		self.latitude = "24.882945"
 		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校"
@@ -177,6 +177,8 @@ class Parse(object):
 				allow_redirects = False
 			)
 			self.WFId = json.loads(self.wfid.text)["data"]["WFId"]
+			self.institution = json.loads(self.wfid.text)["data"]["PubOrgName"]
+			self.publisher = jsob.loads(self.wfid.text)["data"]["PubPersonName"]
 			return self.wfid
 		else:
 			print("TaskId is empty.")
@@ -214,7 +216,7 @@ class Parse(object):
 			return False
 
 	def submit(self):
-		if self.ProcessId and self.quest is not None:
+		if self.ProcessId and self.quest and self.institution and self.publisher is not None:
 			data = {
 				"WFId": self.WFId,
 				"Data": json.dumps({
@@ -278,6 +280,7 @@ class Parse(object):
 						"\n====\t====\t====\n" +
 						"Date: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
 						"\nTitle: " + self.Title +
+						"\nAccount: "
 						"\nTaskId: " + self.TaskId +
 						"\nWFId: " + self.WFId +
 						"\nProcessId: " + self.ProcessId +
