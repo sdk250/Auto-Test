@@ -29,6 +29,7 @@ class Parse(object):
 		self.get_cookies_count = 0
 		self.account = args["account"]
 		self.password = args["password"]
+		self.errmsg = "\n"
 
 		self.runtime = open("/tmp/parse-runtime.log", "ab+")
 		self.session = requests.session()
@@ -78,6 +79,7 @@ class Parse(object):
 					"\n====\t====\t====\n" +
 					"Date: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
 					"\nTitle: 出现了严重错误" +
+					"\nAccount: " + self.account +
 					"\n====\t====\t====\n", encoding = "UTF-8"
 				)
 			)
@@ -182,6 +184,7 @@ class Parse(object):
 			return self.wfid
 		else:
 			print("TaskId is empty.")
+			self.errmsg += "TaskId is empty.\n"
 			return False
 
 	def get_processid(self):
@@ -213,6 +216,7 @@ class Parse(object):
 			}
 		else:
 			print("WFId is empty.")
+			self.errmsg += "WFId is empty.\n"
 			return False
 
 	def submit(self):
@@ -289,21 +293,18 @@ class Parse(object):
 					)
 				)
 			else:
-				self.runtime.write(
-					bytes(
-						"\n====\t====\t====\n" +
-						"Date: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
-						"\nTitle: Written Error." +
-						"\n====\t====\t====\n", encoding = "UTF-8"
-					)
-				)
+				self.errmsg += "Submit error.\n"
 			self._quit()
 			return self.submit_
 		else:
 			print("Process is empty.")
+			self.errmsg += "ProcessId or quest or institution or publisher is empty\n"
 			return False
 
 	def _quit(self):
+		if self.errmsg != "\n":
+			self.errmsg += "Account: " + self.account
+			self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
 		self.driver.quit()
 		self.runtime.close()
 		quit()
