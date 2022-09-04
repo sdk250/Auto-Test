@@ -27,6 +27,8 @@ class Parse(object):
 		self.latitude = "24.882945"
 		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校"
 		self.get_cookies_count = 0
+		self.account = args["account"]
+		self.password = args["password"]
 
 		self.runtime = open("/tmp/parse-runtime.log", "ab+")
 		self.session = requests.session()
@@ -103,8 +105,8 @@ class Parse(object):
 			value = "button.oauth_check_login"
 		)
 
-		self.uname.send_keys(args["account"])
-		self.upwd.send_keys(args["password"])
+		self.uname.send_keys(self.account)
+		self.upwd.send_keys(self.password)
 		self.login.click()
 
 		time.sleep(6)
