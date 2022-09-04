@@ -46,5 +46,5 @@ a.submit() # Submit information
 > Google Email: 520sdk250@gmail.com<br>
 > QQ/TIM: 2094858273<br>
 > Tel: 13085354260<br>
-部分代码参考 [参考一](https://www.programminghunter.com/article/39181948028/) ,
+部分代码参考: [参考一](https://www.programminghunter.com/article/39181948028/) ,
 [参考二](https://gitee.com/ye-qiuming/nnu_yiban)
