@@ -56,7 +56,17 @@ $> crontab -e
 > Q: 支持 `Windows` 吗?
 >> - A: 暂时没有时间，您可以自行修改适配 `Windows` 代码量几分钟就能完成
 
+> Q: 为什么不在 `parse.py` 中写注释?
+>> - A: 抱歉，因为我实在没时间，后面一定加上
 
+> Q: Why not use English?
+>> - A: I think no one use it except Chinese student.
+
+> Q: 作者是昆明冶金的吗?
+>> - A: 是的，所以我的项目中大部分的设定都是围绕着我们学校来的
+
+> Q: 作者学号?
+>> - A: 首先，我很能理解你想 `感谢` 我的心情。所以 你的好意我心领了
 
 ---
 # 使用须知
