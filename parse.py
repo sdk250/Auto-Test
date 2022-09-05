@@ -303,7 +303,7 @@ class Parse(object):
 
 	def _quit(self):
 		if self.errmsg != "\n":
-			self.errmsg += "Account: " + self.account
+			self.errmsg += ("Account: " + self.account)
 			self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
 		self.driver.quit()
 		self.runtime.close()
