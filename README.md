@@ -42,8 +42,8 @@ $> crontab -e
 就此，自动化结束。<br>
 
 # 注意事项
-使用前请修改 `parse.py` 中 `self.longitude` , `self.latitude` , `self.address` , ~ `self.institution`
-, `self.publisher` ~ 为您本地化的 `value` <br>
+使用前请修改 `parse.py` 中 `self.longitude` , `self.latitude` , `self.address` , ~`self.institution`
+, `self.publisher`~ 为您本地化的 `value` <br>
 默认为本人的学校和发布机构<br>
 
 # FAQ
