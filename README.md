@@ -37,13 +37,13 @@ $> crontab -e
 ```shell
 30 8,12,20 * * * /usr/bin/python3 <Your work directory>/<item>-run.py
 ```
-以上含义为每天 ~早8，中12，晚8点半~ 各执行一次打卡<br>
+以上含义为每天早8，中12，晚8点半各执行一次打卡<br>
 我的学校是这样来的，请按照您的本地化进行修改<br>
 就此，自动化结束。<br>
 
 # 注意事项
 使用前请修改 `parse.py` 中 `self.longitude` , `self.latitude` , `self.address` , ~`self.institution`
-, `self.publisher`~ 为您本地化的 `value` <br>
+, `self.publisher`~ (以上两项已设定为自动获取，无需手动输入) 为您本地化的 `value` <br>
 默认为本人的学校和发布机构<br>
 
 # FAQ
