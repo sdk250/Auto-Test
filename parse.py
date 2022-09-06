@@ -329,9 +329,9 @@ class Parse(object):
 				self.smtpObj.connect(self.smtp_host, self.smtp_port)
 				self.smtpObj.login(self.server_mail, self.server_key)
 				self.smtpObj.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
-				self.msg += "Mail send success.\n"
+				self.errmsg += "Mail send success.\n"
 			except:
-				self.msg += "Mail send fail.\n"
+				self.errmsg += "Mail send fail.\n"
 			self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
 		self.driver.quit()
 		self.runtime.close()
