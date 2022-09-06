@@ -294,6 +294,13 @@ class Parse(object):
 				)
 			else:
 				self.errmsg += "Submit error.\n"
+				self.runtime.write(
+					bytes(
+						"\n====\t====\t====\n" +
+						"Log: " + self.submit_.text +
+						"\n====\t====\t====\n", encoding = "UTF-8"
+					)
+				)
 			self._quit()
 			return self.submit_
 		else:
