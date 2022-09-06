@@ -333,6 +333,7 @@ class Parse(object):
 			except:
 				self.errmsg += "Mail send fail.\n"
 			self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
+		self.smtpObj.quit()
 		self.driver.quit()
 		self.runtime.close()
 		quit()
