@@ -327,7 +327,7 @@ class Parse(object):
 				self.smtpObj = smtplib.SMTP_SSL(self.smtp_host)
 				self.smtpObj.connect(self.smtp_host, self.smtp_port)
 				self.smtpObj.login(self.server_mail, self.server_key)
-				self.smtp.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
+				self.smtpObj.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
 				self.msg += "Mail send success.\n"
 			except:
 				self.msg += "Mail send fail.\n"
