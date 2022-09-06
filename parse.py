@@ -314,6 +314,7 @@ class Parse(object):
 		else:
 			print("Process is empty.")
 			self.errmsg += "ProcessId or quest or institution or publisher is empty\n"
+			self._quit()
 			return False
 
 	def _quit(self):
