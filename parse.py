@@ -5,10 +5,13 @@ import datetime
 import random
 import base64
 import re
+import smtplib
 from urllib.parse import quote
 from Crypto.Cipher import AES
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from email.mime.text import MIMEText
+from email.header import Header
 
 class Parse(object):
 	def __init__(self, **args):
@@ -30,6 +33,11 @@ class Parse(object):
 		self.account = args["account"]
 		self.password = args["password"]
 		self.errmsg = "\n"
+		self.server_mail = args["server_mail"]
+		self.server_key = args["email_key"]
+		self.client_mail = args["client_mail"]
+		self.smtp_host = "smtp.qq.com"
+		self.smtp_port = 465
 
 		self.runtime = open("/tmp/parse-runtime.log", "ab+")
 		self.session = requests.session()
@@ -311,6 +319,18 @@ class Parse(object):
 	def _quit(self):
 		if self.errmsg != "\n":
 			self.errmsg += ("Account: " + self.account)
+			self.msg = MIMEText(self.errmsg, "plain", "UTF-8")
+			self.msg["From"] = Header("Server_Parse")
+			self.msg["To"] = Header("Client")
+			self.msg["Subject"] = Header("Error messages output!", "UTF-8")
+			try:
+				self.smtpObj = smtplib.SMTP_SSL(self.smtp_host)
+				self.smtpObj.connect(self.smtp_host, self.smtp_port)
+				self.smtpObj.login(self.server_mail, self.server_key)
+				self.smtp.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
+				self.msg += "Mail send success.\n"
+			except:
+				self.msg += "Mail send fail.\n"
 			self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
 		self.driver.quit()
 		self.runtime.close()
