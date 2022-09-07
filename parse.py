@@ -55,7 +55,10 @@ class Parse(object):
 
 		self.date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 		print(str(self.date))
-		self.user_agent = "Mozilla/5.0 (iPhone; XT2201-2 Build/S1SC32.52-69-24; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 Mobile Safari/537.36;webank/h5face;webank/1.0 yiban_iOS/5.0.12"
+		self.user_agent = "Mozilla/5.0 (iPhone; XT2201-2 " \
+			"Build/S1SC32.52-69-24; wv) AppleWebKit/537.36 " \
+			"(KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 " \
+			"Mobile Safari/537.36;webank/h5face;webank/1.0 yiban_iOS/5.0.12"
 		self.headers = {
 			"User-Agent": self.user_agent,
 			"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -79,6 +82,7 @@ class Parse(object):
 		self.get_cookies_count += 1
 		if self.get_cookies_count > 10:
 			print("\033[1;31m严重错误\033[0m")
+			self.errmsg += "严重错误\n"
 			self.runtime.write(
 				bytes(
 					"\n====\t====\t====\n" +
@@ -93,20 +97,29 @@ class Parse(object):
 			options = self.opt,
 			service_log_path = self.log_path
 		)
-		self.driver.get("https://oauth.yiban.cn/code/html?client_id=95626fa3080300ea&redirect_uri=https://f.yiban.cn/iapp7463")
+		try:
+			self.driver.get("https://oauth.yiban.cn/code/html?" \
+				"client_id=95626fa3080300ea&" \
+				"redirect_uri=https://f.yiban.cn/iapp7463"
+			)
+		except:
+			self.errmsg += "Access \"oauth.yiban.cn\" failure.\n"
 
-		self.uname = self.driver.find_element(
-			by = By.ID,
-			value = "oauth_uname_w"
-		)
-		self.upwd = self.driver.find_element(
-			by = By.ID,
-			value = "oauth_upwd_w"
-		)
-		self.login = self.driver.find_element(
-			by = By.CSS_SELECTOR,
-			value = "button.oauth_check_login"
-		)
+		try:
+			self.uname = self.driver.find_element(
+				by = By.ID,
+				value = "oauth_uname_w"
+			)
+			self.upwd = self.driver.find_element(
+				by = By.ID,
+				value = "oauth_upwd_w"
+			)
+			self.login = self.driver.find_element(
+				by = By.CSS_SELECTOR,
+				value = "button.oauth_check_login"
+			)
+		except:
+			self.errmsg += "Cannot find elements.\n"
 
 		self.uname.send_keys(self.account)
 		self.upwd.send_keys(self.password)
@@ -184,7 +197,6 @@ class Parse(object):
 			self.publisher = json.loads(self.wfid.text)["data"]["PubPersonName"]
 			return self.wfid
 		else:
-			print("TaskId is empty.")
 			self.errmsg += "TaskId is empty.\n"
 			return False
 
@@ -216,7 +228,6 @@ class Parse(object):
 				"quest": self.quest
 			}
 		else:
-			print("WFId is empty.")
 			self.errmsg += "WFId is empty.\n"
 			return False
 
@@ -302,12 +313,9 @@ class Parse(object):
 						"\n====\t====\t====\n", encoding = "UTF-8"
 					)
 				)
-			self._quit()
 			return self.submit_
 		else:
-			print("Process is empty.")
 			self.errmsg += "ProcessId or quest or institution or publisher is empty\n"
-			self._quit()
 			return False
 
 	def _quit(self):
@@ -322,15 +330,22 @@ class Parse(object):
 			self.smtpObj.login(self.server_mail, self.server_key)
 			try:
 				self.smtpObj.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
-				self.errmsg += "\nMail send success.\n"
+				self.errmsg += "Mail send success.\n"
 			except:
-				self.errmsg += "\nMail send fail.\n"
+				self.errmsg += "Mail send fail.\n"
 			self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
 		self.smtpObj.quit()
 		self.driver.quit()
 		self.runtime.close()
-		quit()
 		print("\033[1;32mAll Done.\033[0m")
+		quit()
+
+	def run(self):
+		self.get_task()
+		self.get_WFId()
+		self.get_processid
+		self.submit()
+		self._quit()
 
 	def encrypto_data(self, data, key, iv):
 		_data = json.dumps(data, ensure_ascii = False).replace(" ", "")
