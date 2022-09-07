@@ -305,7 +305,7 @@ class Parse(object):
 					)
 				)
 			else:
-				self.errmsg += "Submit error.\n"
+				self.errmsg += ("Submit error.\nLog: " + self.submit_.text + "\n")
 				self.runtime.write(
 					bytes(
 						"\n====\t====\t====\n" +
