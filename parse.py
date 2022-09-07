@@ -343,7 +343,7 @@ class Parse(object):
 	def run(self):
 		self.get_task()
 		self.get_WFId()
-		self.get_processid
+		self.get_processid()
 		self.submit()
 		self._quit()
 
