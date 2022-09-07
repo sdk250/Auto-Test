@@ -3,6 +3,10 @@
 你可以使用 `parse.py` 来进行某些操作<br>
 就目前而言，只支持 `Linux` 分支系统<br>
 
+# 功能更新日志
+- 2022年9月7日
+> 新增打卡失败发送邮件提醒功能
+
 # 使用方法
 `Clone` 该仓库或下载仓库 `parse.py` 的raw到本地。<br>
 使用前请确保您的工作环境具有 `Chrome Driver` 和
@@ -12,11 +16,17 @@
 并且键入: <br>
 ```python
 from parse import Parse
-a = Parse(account = <Your Account>, password = <Your Password>)
-a.get_task() # Get quest id
+a = Parse(account = <Your Account>,
+	password = <Your Password>,
+	server_mail = <Your sender email>,
+	email_key = <Sender email login token>,
+	client_mail = <Receiver email>
+)
+~ a.get_task() # Get quest id
 a.get_WFId() # Get WFId
 a.get_processid() # Get processid
-a.submit() # Submit information
+a.submit() # Submit information ~
+a.run() #Just <Parse(obj).run()> to running
 ```
 如果运行成功，程序将会在您的 `/tmp` 目录输出 `parse-runtime.log` 日志。<br>
 如果您在运行时日志 `parse-runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
