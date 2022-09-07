@@ -320,7 +320,7 @@ class Parse(object):
 
 	def _quit(self):
 		if self.errmsg != "\n":
-			self.errmsg += ("Account: " + self.account)
+			self.errmsg += ("Account: " + self.account + "\n")
 			self.msg = MIMEText(self.errmsg, "plain", "UTF-8")
 			self.msg["From"] = Header("Server_Parse")
 			self.msg["To"] = Header("Client")
