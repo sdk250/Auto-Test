@@ -22,11 +22,13 @@ a = Parse(account = <Your Account>,
 	email_key = <Sender email login token>,
 	client_mail = <Receiver email>
 )
-~ a.get_task() # Get quest id
+"""
+a.get_task() # Get quest id
 a.get_WFId() # Get WFId
 a.get_processid() # Get processid
-a.submit() # Submit information ~
-a.run() #Just <Parse(obj).run()> to running
+a.submit() # Submit information
+"""
+a.run() # Just <Parse(obj).run()> to running now
 ```
 如果运行成功，程序将会在您的 `/tmp` 目录输出 `parse-runtime.log` 日志。<br>
 如果您在运行时日志 `parse-runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
