@@ -38,6 +38,9 @@ class Parse(object):
 		self.client_mail = args["client_mail"]
 		self.smtp_host = "smtp.qq.com"
 		self.smtp_port = 465
+		self.smtpObj = smtplib.SMTP_SSL(self.smtp_host)
+		self.smtpObj.connect(self.smtp_host, self.smtp_port)
+		self.smtpObj.login(self.server_mail, self.server_key)
 
 		self.runtime = open("/tmp/parse-runtime.log", "ab+")
 		self.session = requests.session()
@@ -325,9 +328,6 @@ class Parse(object):
 			self.msg["From"] = Header("Server_Parse")
 			self.msg["To"] = Header("Client")
 			self.msg["Subject"] = Header("Error messages output!", "UTF-8")
-			self.smtpObj = smtplib.SMTP_SSL(self.smtp_host)
-			self.smtpObj.connect(self.smtp_host, self.smtp_port)
-			self.smtpObj.login(self.server_mail, self.server_key)
 			try:
 				self.smtpObj.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
 				self.errmsg += "Mail send success.\n"
