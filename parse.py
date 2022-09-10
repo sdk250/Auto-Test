@@ -49,11 +49,12 @@ class Parse(object):
 		self.day = str(datetime.datetime.now().strftime("%d"))
 		if int(self.day) < 10:
 			self._month = int(self.month) - 1
-			if self._month == 1:
+			if self._month == 0:
 				self._month = 12
 				self.year = int(self.year) - 1
 			self._day = 30 + (int(self.day) - 10)
 		else:
+			self._month = int(self.month)
 			self._day = int(self.day) - 10
 
 		self.date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
