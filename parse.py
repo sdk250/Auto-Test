@@ -15,38 +15,41 @@ from email.header import Header
 
 class Parse(object):
 	def __init__(self, **args):
-		self.log_path = "/tmp/parse-run.log"
-		self.TaskId = None
+		self.log_path = "/tmp/parse-run.log" # 运行日志
+		self.runtime_path = "/tmp/parse-runtime.log" # 运行时日志
+		self.TaskId = None # 未完成任务ID
 		self.WFId = None
-		self.ProcessId = None
-		self.Title = None
-		self.token = None
-		self.quest = None
+		self.ProcessId = None # 任务进程ID
+		self.Title = None # 任务标题
+		self.token = None # Cookies的访问token
+		self.quest = None # 加密过的内容细节
 		self.key = "2knV5VGRTScU7pOq"
 		self.iv = "UmNWaNtM0PUdtFCs"
-		self.institution = None
-		self.publisher = None
-		self.longitude = "102.442694"
-		self.latitude = "24.882945"
-		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校"
-		self.get_cookies_count = 0
+		self.institution = None # 发布机构
+		self.publisher = None # 发布人
+		self.longitude = "102.442694" # 经度
+		self.latitude = "24.882945" # 纬度
+		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校" # 在地图上的文字信息
+		self.get_cookies_count = 0 # 获取cookies的总次数
 		self.account = args["account"]
 		self.password = args["password"]
-		self.errmsg = "\n"
-		self.server_mail = args["server_mail"]
-		self.server_key = args["email_key"]
-		self.client_mail = args["client_mail"]
-		self.smtp_host = "smtp.qq.com"
-		self.smtp_port = 465
-		self.smtpObj = smtplib.SMTP_SSL(self.smtp_host)
+		self.errmsg = "\n" # 初始错误信息
+		self.server_mail = args["server_mail"] # 发送方邮箱
+		self.server_key = args["email_key"] # 发送方邮箱登录密钥
+		self.client_mail = args["client_mail"] # 接受方邮箱
+		self.smtp_host = "smtp.qq.com" # 仅支持QQ邮箱
+		self.smtp_port = 465 # QQ邮箱的SMTP服务端口号
+		self.smtpObj = smtplib.SMTP_SSL(self.smtp_host) # 初始化QQ邮箱SSL加密通道
 		self.smtpObj.connect(self.smtp_host, self.smtp_port)
 		self.smtpObj.login(self.server_mail, self.server_key)
 
-		self.runtime = open("/tmp/parse-runtime.log", "ab+")
-		self.session = requests.session()
+		self.runtime = open(self.runtime_path, "ab+")
+		self.session = requests.session() # 请求会话
 		self.year = str(datetime.datetime.now().year)
 		self.month = str(datetime.datetime.now().strftime("%m"))
 		self.day = str(datetime.datetime.now().strftime("%d"))
+
+		# 月份进制的逻辑判断，防止一些没必要的BUG
 		if int(self.day) < 10:
 			self._month = int(self.month) - 1
 			if self._month == 0:
@@ -73,6 +76,7 @@ class Parse(object):
 		}
 		self.cookies = None
 
+		# 初始化 Chrome Web Driver 来登录
 		self.opt = webdriver.ChromeOptions()
 
 		self.opt.add_argument("--headless")
@@ -82,7 +86,9 @@ class Parse(object):
 
 		self.get_cookies()
 
+	# 获取Cookies用于提交表单
 	def get_cookies(self):
+		# 为防止过多次的重复请求Cookies，加了次数限制
 		self.get_cookies_count += 1
 		if self.get_cookies_count > 10:
 			print("\033[1;31m严重错误\033[0m")
@@ -102,6 +108,7 @@ class Parse(object):
 			service_log_path = self.log_path
 		)
 		try:
+			# 登录主页面
 			self.driver.get("https://oauth.yiban.cn/code/html?" \
 				"client_id=95626fa3080300ea&" \
 				"redirect_uri=https://f.yiban.cn/iapp7463"
@@ -131,12 +138,14 @@ class Parse(object):
 
 		time.sleep(6)
 
+		# 登录完成，保存Cookies
 		self.set_cookies(
 			self.driver.get_cookie("PHPSESSID"),
 			self.driver.get_cookie("csrf_token"),
 			self.driver.get_cookie("cpi")
 		)
 
+	# 保存/设定Cookies
 	def set_cookies(self, phpsessid, token, cpi):
 		if phpsessid is None:
 			print("\033[1;31mPHPSESSID is empty.\033[0m")
@@ -162,6 +171,7 @@ class Parse(object):
 		}
 		return self.cookies
 
+	# 获取未完成任务ID
 	def get_task(self):
 		self.task = self.session.get(
 			url = "https://api.uyiban.com/officeTask/client/index/uncompletedList",
@@ -176,14 +186,16 @@ class Parse(object):
 			cookies = self.cookies,
 			allow_redirects = False
 		)
+		# 这里本来想做一个: 如果发现多个未完成任务就一并完成，但一直没什么时间
 		for i in json.loads(self.task.text)["data"]:
-			if len(i) / 8 > 1:
-				print("\033[1;32mMore....\033[0m")
-				break;
 			self.TaskId = i["TaskId"]
 			self.Title = i["Title"]
+			if len(i) / 8 > 1:
+				self.errmsg += "More....\n"
+				break;
 		return self.task
 
+	# Get WFId
 	def get_WFId(self):
 		if self.TaskId is not None:
 			self.wfid = self.session.get(
@@ -204,6 +216,7 @@ class Parse(object):
 			self.errmsg += "TaskId is empty.\n"
 			return False
 
+	# 获取任务细节和加密过的任务Key
 	def get_processid(self):
 		if self.WFId is not None:
 			self.processid = self.session.post(
@@ -235,13 +248,14 @@ class Parse(object):
 			self.errmsg += "WFId is empty.\n"
 			return False
 
+	# 生成并提交表单
 	def submit(self):
 		if self.ProcessId and self.quest and self.institution and self.publisher is not None:
 			data = {
 				"WFId": self.WFId,
 				"Data": json.dumps({
 					self.quest["data"]["Form"][1]["id"]: "是",
-					self.quest["data"]["Form"][2]["id"]: str(round((36 + random.uniform(0, 1)), 1)),
+					self.quest["data"]["Form"][2]["id"]: str(round((36 + random.uniform(0, 1)), 1)), # 随机体温值 (36.0 ~ 36.9)
 					self.quest["data"]["Form"][3]["id"]: ["以上都无"],
 					self.quest["data"]["Form"][4]["id"]: "好",
 					self.quest["data"]["Form"][5]["id"]: {
@@ -294,7 +308,7 @@ class Parse(object):
 				data = data_,
 				allow_redirects = False
 			)
-			if json.loads(self.submit_.text)["code"] == 0:
+			if json.loads(self.submit_.text)["code"] == 0: # 请求成功
 				self.runtime.write(
 					bytes(
 						"\n====\t====\t====\n" +
@@ -308,7 +322,7 @@ class Parse(object):
 						"\n====\t====\t====\n", encoding = "UTF-8"
 					)
 				)
-			else:
+			else: # 请求失败
 				self.errmsg += ("Submit error.\nLog: " + self.submit_.text + "\n")
 				self.runtime.write(
 					bytes(
@@ -322,6 +336,7 @@ class Parse(object):
 			self.errmsg += "ProcessId or quest or institution or publisher is empty\n"
 			return False
 
+	# 模拟析构函数，释放内存
 	def _quit(self):
 		if self.errmsg != "\n":
 			self.errmsg += ("Account: " + self.account + "\n")
@@ -341,6 +356,7 @@ class Parse(object):
 		print("\033[1;32mAll Done.\033[0m")
 		quit()
 
+	# 一键运行
 	def run(self):
 		self.get_task()
 		self.get_WFId()
@@ -348,6 +364,7 @@ class Parse(object):
 		self.submit()
 		self._quit()
 
+	# 加密表单内容
 	def encrypto_data(self, data, key, iv):
 		_data = json.dumps(data, ensure_ascii = False).replace(" ", "")
 		res = re.sub(re.compile("(\d{4}-\d+-\d{2,}:\d{2,})"), str(self.date), _data)
