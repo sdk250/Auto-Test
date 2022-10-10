@@ -27,11 +27,11 @@ a = Parse(account = <Your Account>,
 
 a.run() # Just <Parse(obj).run()> to running now
 ```
-> 具体请看 `run.py` 里的介绍 <br>
+** 具体请看 `run.py` 里的介绍 ** <br>
 如果运行成功，程序将会在您的 `/tmp` 目录输出 `parse-runtime.log` 日志。<br>
 如果您在运行时日志 `parse-runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
 来查阅并解决错误。<br>
-以上目录 `Windows` 中为 `%TEMP%\parse-rumtime.log` <br>
+以上目录在 `Windows` 中为 `%TEMP%\parse-rumtime.log` <br>
 
 # 自动化
 如果以上运行都没有发生任何错误，恭喜你接下来进入自动化阶段。<br>
