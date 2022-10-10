@@ -5,6 +5,7 @@ import datetime
 import random
 import base64
 import re
+import os
 import smtplib
 from urllib.parse import quote
 from Crypto.Cipher import AES
@@ -12,11 +13,20 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from email.mime.text import MIMEText
 from email.header import Header
+from sys import platform
 
 class Parse(object):
 	def __init__(self, **args):
-		self.log_path = "/tmp/parse-run.log" # 运行日志
-		self.runtime_path = "/tmp/parse-runtime.log" # 运行时日志
+		self.__version = "0.2"
+		if "linux" in sys.platform:
+			self.log_path = "/tmp/parse-run.log" # 运行日志
+			self.runtime_path = "/tmp/parse-runtime.log" # 运行时日志
+		elif "win" in sys.platform:
+			self.log_path = os.environ["TEMP"] + "\\parse-run.log"
+			self.runtime_path = os.environ["TEMP"] + "\\parse-runtime.log"
+		else:
+			print("Cannot find your operating system")
+			quit()
 		self.TaskId = None # 未完成任务ID
 		self.WFId = None
 		self.ProcessId = None # 任务进程ID
@@ -27,21 +37,40 @@ class Parse(object):
 		self.iv = "UmNWaNtM0PUdtFCs"
 		self.institution = None # 发布机构
 		self.publisher = None # 发布人
-		self.longitude = "102.442694" # 经度
-		self.latitude = "24.882945" # 纬度
-		self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校" # 在地图上的文字信息
+
+		if "longitude" in args:
+			self.longitude = args["longitude"]
+		else:
+			self.longitude = "102.442694" # 经度
+
+		if "latitude" in args:
+			self.latitude = args["latitude"]
+		else:
+			self.latitude = "24.882945" # 纬度
+
+		if "address" in args:
+			self.address = args["address"]
+		else:
+			self.address = "云南省昆明市安宁市098乡道靠近昆明冶金高等专科学校" # 在地图上的文字信息
+
 		self.get_cookies_count = 0 # 获取cookies的总次数
 		self.account = args["account"]
 		self.password = args["password"]
 		self.errmsg = "\n" # 初始错误信息
-		self.server_mail = args["server_mail"] # 发送方邮箱
-		self.server_key = args["email_key"] # 发送方邮箱登录密钥
-		self.client_mail = args["client_mail"] # 接受方邮箱
-		self.smtp_host = "smtp.qq.com" # 仅支持QQ邮箱
-		self.smtp_port = 465 # QQ邮箱的SMTP服务端口号
-		self.smtpObj = smtplib.SMTP_SSL(self.smtp_host) # 初始化QQ邮箱SSL加密通道
-		self.smtpObj.connect(self.smtp_host, self.smtp_port)
-		self.smtpObj.login(self.server_mail, self.server_key)
+
+		if "warn" in args:
+			if args["warn"] == True:
+				self.warn = args["warn"]
+				self.server_mail = args["server_mail"] # 发送方邮箱
+				self.server_key = args["email_key"] # 发送方邮箱登录密钥
+				self.client_mail = args["client_mail"] # 接受方邮箱
+				self.smtp_host = "smtp.qq.com" # 仅支持QQ邮箱
+				self.smtp_port = 465 # QQ邮箱的SMTP服务端口号
+				self.smtpObj = smtplib.SMTP_SSL(self.smtp_host) # 初始化QQ邮箱SSL加密通道
+				self.smtpObj.connect(self.smtp_host, self.smtp_port)
+				self.smtpObj.login(self.server_mail, self.server_key)
+		else:
+			self.warn = False
 
 		self.runtime = open(self.runtime_path, "ab+")
 		self.session = requests.session() # 请求会话
@@ -340,17 +369,18 @@ class Parse(object):
 	def _quit(self):
 		if self.errmsg != "\n":
 			self.errmsg += ("Account: " + self.account + "\n")
-			self.msg = MIMEText(self.errmsg, "plain", "UTF-8")
-			self.msg["From"] = Header("Server_Parse")
-			self.msg["To"] = Header("Client")
-			self.msg["Subject"] = Header("Error messages output!", "UTF-8")
-			try:
-				self.smtpObj.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
-				self.errmsg += "Mail send success.\n"
-			except:
-				self.errmsg += "Mail send fail.\n"
-			self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
-		self.smtpObj.quit()
+			if self.warn == True:
+				self.msg = MIMEText(self.errmsg, "plain", "UTF-8")
+				self.msg["From"] = Header("Server_Parse")
+				self.msg["To"] = Header("Client")
+				self.msg["Subject"] = Header("Error messages output!", "UTF-8")
+				try:
+					self.smtpObj.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
+					self.errmsg += "Mail send success.\n"
+				except:
+					self.errmsg += "Mail send fail.\n"
+				self.runtime.write(bytes(self.errmsg, encoding = "UTF-8"))
+				self.smtpObj.quit()
 		self.driver.quit()
 		self.runtime.close()
 		print("\033[1;32mAll Done.\033[0m")
@@ -358,6 +388,7 @@ class Parse(object):
 
 	# 一键运行
 	def run(self):
+		print("Version:", self.__version)
 		self.get_task()
 		self.get_WFId()
 		self.get_processid()
