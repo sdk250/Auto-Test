@@ -18,10 +18,10 @@ from sys import platform
 class Parse(object):
 	def __init__(self, **args):
 		self.__version = "0.2"
-		if "linux" in sys.platform:
+		if "linux" in platform:
 			self.log_path = "/tmp/parse-run.log" # 运行日志
 			self.runtime_path = "/tmp/parse-runtime.log" # 运行时日志
-		elif "win" in sys.platform:
+		elif "win" in platform:
 			self.log_path = os.environ["TEMP"] + "\\parse-run.log"
 			self.runtime_path = os.environ["TEMP"] + "\\parse-runtime.log"
 		else:
