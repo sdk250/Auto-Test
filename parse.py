@@ -113,17 +113,13 @@ class Parse(object):
 			allow_redirects = True
 		)
 		cipher = PKCS1_v1_5.new(RSA.importKey(compile("id=\"key\" ?value=\"?([0-9a-zA-Z -_/=+\n]+[^\"])\"? ").findall(result.text)[0]))
-		try:
-			waf = compile("https_waf_cookie=([0-9a-zA-Z-]+);{1}").findall(result.headers["Set-Cookie"])[0]
-			_YB = compile("_YB_OPEN_V2_0=([0-9a-zA-Z-]+);{1}").findall(result.headers["Set-Cookie"])[0]
-			_X = compile("_X=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-			_Y = compile("_Y=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-			_Z = compile("_Z=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-			_C = compile("_C=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-			_S = compile("_S=([0-9a-zA-Z]+);{1}").findall(result.headers["Set-Cookie"])[0]
-		except:
-			self.cookies = self._cookies(account, password)
-			return
+		waf = compile("https_waf_cookie=([0-9a-zA-Z-_]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		_YB = compile("_YB_OPEN_V2_0=([0-9a-zA-Z-_]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		_X = compile("_X=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		_Y = compile("_Y=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		_Z = compile("_Z=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		_C = compile("_C=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		_S = compile("_S=([0-9a-zA-Z]+);{1}").findall(result.headers["Set-Cookie"])[0]
 		self.session.cookies = utils.cookiejar_from_dict({
 			"https_waf_cookie": waf,
 			"_YB_OPEN_V2_0": _YB,
@@ -146,6 +142,10 @@ class Parse(object):
 		self.session.cookies = utils.cookiejar_from_dict({
 			"_YB_OPEN_V2_0": _YB
 		})
+		if "error" in loads(result.text)["reUrl"]:
+			self.errmsg += self.account + "\tLogin fail.\n"
+			self._cookies(account = account, password = self.password)
+			return
 		self.headers.update(Referer = "https://oauth.yiban.cn/")
 		del self.headers["Origin"]
 		result = self.session.get(
@@ -348,7 +348,7 @@ class Parse(object):
 	# 模拟析构函数，释放内存
 	def _quit(self):
 		if self.errmsg != "\n":
-			self.errmsg += ("Account: " + self.account + "\n")
+			# self.errmsg += ("Account: " + self.account + "\n")
 			if self.email_server == True:
 				self.msg = MIMEText(self.errmsg, "plain", "UTF-8")
 				self.msg["From"] = Header("Server_Parse")
@@ -367,8 +367,9 @@ class Parse(object):
 	# 一键运行
 	def run(self):
 		print("Version:", self.__version)
-		self.cookies = self._cookies(account = self.account, password = self.password)
-		task = self.get_task(csrf = self.csrf, cookies = self.cookies)
+		task = self.get_task(csrf = self.csrf, cookies = self._cookies(account = self.account, password = self.password))
+		if task == {}:
+			self.errmsg += self.account + "Task is None."
 		for i in task.keys():
 			self.submit(taskId = i, title = task[i], csrf = self.csrf, cookies = self.cookies)
 
