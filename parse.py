@@ -52,7 +52,7 @@ class Parse(object):
 			self.smtp_port = 465 # QQ邮箱的SMTP服务端口号
 			self.smtpObj = SMTP_SSL(self.smtp_host) # 初始化QQ邮箱SSL加密通道
 			self.smtpObj.connect(self.smtp_host, self.smtp_port)
-			self.smtpObj.login(self.server_mail, self.server_key)
+			self.smtpObj.login(self.server_email, self.server_key)
 		else:
 			self.email_server = False
 
@@ -355,7 +355,7 @@ class Parse(object):
 				self.msg["To"] = Header("Client")
 				self.msg["Subject"] = Header("Error messages output!", "UTF-8")
 				try:
-					self.smtpObj.sendmail(self.server_mail, self.client_mail, self.msg.as_string())
+					self.smtpObj.sendmail(self.server_email, self.client_email, self.msg.as_string())
 					self.errmsg += str(datetime.now()) + "Mail send success.\n"
 				except:
 					self.errmsg += str(datetime.now()) + "Mail send failure.\n"
