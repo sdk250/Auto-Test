@@ -196,7 +196,7 @@ class Parse(object):
 			"csrf_token": self.csrf,
 			"PHPSESSID": self.phpsessid
 		})
-		self.headers.update(Referer = "https://c.uyiban.com")
+		self.headers.update(Referer = "https://c.uyiban.com/", Origin = "https://c.uyiban.com")
 		result = self.session.get(
 			url = "https://api.uyiban.com/base/c/auth/yiban",
 			params = {
