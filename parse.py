@@ -363,7 +363,7 @@ class Parse(object):
 		self.runtime.write(bytes(self.errmsg + "\n====\t====\t====\n", encoding = "UTF-8"))
 		self.runtime.close()
 		print("\033[1;32mAll Done.\033[0m")
-		return True
+		return
 
 	# 一键运行
 	def run(self):
