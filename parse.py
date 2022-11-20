@@ -92,7 +92,7 @@ class Parse(object):
 		self.get_cookies_count += 1
 		if self.get_cookies_count > 10:
 			self.errmsg += "\nGET COOKIES ERROR.\n"
-			return False
+			return
 		self.csrf = md5(str(datetime.now()).encode("UTF-8")).hexdigest()
 		self.session.cookies = utils.cookiejar_from_dict({
 			"csrf_token": self.csrf
@@ -123,7 +123,7 @@ class Parse(object):
 			_S = compile("_S=([0-9a-zA-Z]+);{1}").findall(result.headers["Set-Cookie"])[0]
 		except:
 			self.cookies = self._cookies(account, password)
-			return False
+			return
 		self.session.cookies = utils.cookiejar_from_dict({
 			"https_waf_cookie": waf,
 			"_YB_OPEN_V2_0": _YB,
