@@ -343,7 +343,7 @@ class Parse(object):
 			)
 		else: # 请求失败
 			self.errmsg += ("\n====\t====\t====\nSubmit error.\nLog: " + self.account + "\n" + submit + "\n====\t====\t====\n")
-		self._quit()
+		# self._quit()
 
 	# 模拟析构函数，释放内存
 	def _quit(self):
@@ -361,7 +361,7 @@ class Parse(object):
 					self.errmsg += str(datetime.now()) + "Mail send failure.\n"
 			self.smtpObj.quit()
 			self.runtime.write(bytes(self.errmsg + "\n====\t====\t====\n", encoding = "UTF-8"))
-		# self.runtime.close()
+		self.runtime.close()
 		print("\033[1;32mAll Done.\033[0m")
 
 	# 一键运行
