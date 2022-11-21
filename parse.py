@@ -342,7 +342,7 @@ class Parse(object):
 				)
 			)
 		else: # 请求失败
-			self.errmsg += ("\n====\t====\t====\nSubmit error.\nLog: " + self.account + "\n" + submit + "\n====\t====\t====\n")
+			self.errmsg += ("\n====\t====\t====\nSubmit error.\nLog: " + self.account + "\n" + str(loads(submit)["code"]) + "\n" + loads(submit)["msg"] + "\n====\t====\t====\n")
 		# self._quit()
 
 	# 模拟析构函数，释放内存
@@ -368,7 +368,8 @@ class Parse(object):
 	# 一键运行
 	def run(self):
 		print("Version:", self.__version)
-		task = self.get_task(csrf = self.csrf, cookies = self._cookies(account = self.account, password = self.password))
+		self.cookies = self._cookies(account = self.account, password = self.password)
+		task = self.get_task(csrf = self.csrf, cookies = self.cookies)
 		if task == {}:
 			self.errmsg += self.account + "Task is None."
 		for i in task.keys():
