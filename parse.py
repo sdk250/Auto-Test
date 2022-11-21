@@ -363,6 +363,7 @@ class Parse(object):
 			self.runtime.write(bytes(self.errmsg + "\n====\t====\t====\n", encoding = "UTF-8"))
 		self.runtime.close()
 		print("\033[1;32mAll Done.\033[0m")
+		quit()
 
 	# 一键运行
 	def run(self):
@@ -372,6 +373,7 @@ class Parse(object):
 			self.errmsg += self.account + "Task is None."
 		for i in task.keys():
 			self.submit(taskId = i, title = task[i], csrf = self.csrf, cookies = self.cookies)
+		self._quit()
 
 	# 加密表单内容
 	def encrypto_data(self, data, key, iv):
