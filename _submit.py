@@ -1,5 +1,5 @@
 from requests import session, utils
-from re import compile
+from re import compile, sub
 from json import loads, dumps
 from smtplib import SMTP_SSL
 from sys import platform
@@ -188,7 +188,7 @@ class Submit(object):
 					"\n====\t====\t====\n" +
 					"Date: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
 					"\nTitle: " + title +
-					"\nAccount: " + self.account +
+					"\nAccount: " + self.name +
 					"\nTaskId: " + taskId +
 					"\nWFId: " + wfid["WFId"] +
 					"\nProcessId: " + processId +
@@ -219,6 +219,7 @@ class Submit(object):
 			self.runtime.write(bytes(self.errmsg + "\n====\t====\t====\n", encoding = "UTF-8"))
 		self.runtime.close()
 		print("\033[1;32mAll Done.\033[0m")
+		return None
 
 	def encrypto_data(self, data, key, iv):
 		data = dumps(data, ensure_ascii = False).replace(" ", "")
