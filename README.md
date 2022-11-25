@@ -8,12 +8,14 @@
 > 新增打卡失败发送邮件提醒功能 (仅支持QQ邮箱)
 - 2022年10月10日
 > 增加Windows系统支持
+- 2022年11月20日
+> 重新架构，去除了对Chromium的依赖。旧的 `parse.py` 将不会再更新
 
 # 使用方法
 `Clone` 该仓库或下载仓库 `parse.py` 的raw到本地。<br>
-使用前请确保您的工作环境具有 `Chrome Driver` 和
+使用前请确保您的工作环境具有
 `python3-pip` 的软件包: `requests` , `pycryptodome` , `json` ,
-`selenium` , `base64` , `urllib` <br>
+~ `selenium` ~ , `base64` , `urllib` <br>
 然后在您的工作目录新建 `<item>-run.py` <br>
 并且键入: <br>
 ```python
@@ -27,7 +29,7 @@ a = Parse(account = <Your Account>,
 
 a.run() # Just <Parse(obj).run()> to running now
 ```
-**具体请看 `run.py` 里的介绍** <br>
+**以上示例已经废除，具体请看 `run.py` 里的介绍** <br>
 如果运行成功，程序将会在您的 `/tmp` 目录输出 `parse-runtime.log` 日志。<br>
 如果您在运行时日志 `parse-runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
 来查阅并解决错误。<br>
