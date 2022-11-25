@@ -8,6 +8,9 @@ from random import uniform
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.header import Header
+from urllib.parse import quote
+from Crypto.Cipher import AES
+from base64 import b64encode
 
 class Submit(object):
 	def __init__(self, name : str = None, email_server : bool = False,
@@ -16,7 +19,7 @@ class Submit(object):
 	):
 		self.__version = "1.0.6"
 		if "linux" in platform:
-			self.runtime_path = "/tmp/parse-runtime.log" # 运行时日志
+			self.runtime_path = "parse-runtime.log" # 运行时日志
 		elif "win" in platform:
 			self.runtime_path = environ["TEMP"] + "\\parse-runtime.log"
 		else:
@@ -216,3 +219,23 @@ class Submit(object):
 			self.runtime.write(bytes(self.errmsg + "\n====\t====\t====\n", encoding = "UTF-8"))
 		self.runtime.close()
 		print("\033[1;32mAll Done.\033[0m")
+
+	def encrypto_data(self, data, key, iv):
+		data = dumps(data, ensure_ascii = False).replace(" ", "")
+		res = sub(compile("(\d{4}-\d+-\d{2,}:\d{2,})"), str(self.date), data)
+		res = res + (
+			AES.block_size - len(res.encode()) % AES.block_size
+		) * chr(
+			AES.block_size - len(res.encode()) % AES.block_size
+		)
+		cipher = AES.new(
+			key.encode("UTF-8"),
+			AES.MODE_CBC,
+			iv.encode("UTF-8")
+		)
+		result = b64encode(
+			b64encode(
+				cipher.encrypt(res.encode("UTF-8"))
+			)
+		)
+		return quote(result.decode("UTF-8"))
