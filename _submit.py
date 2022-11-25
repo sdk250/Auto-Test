@@ -19,7 +19,7 @@ class Submit(object):
 	):
 		self.__version = "1.0.6"
 		if "linux" in platform:
-			self.runtime_path = "parse-runtime.log" # 运行时日志
+			self.runtime_path = "/tmp/parse-runtime.log" # 运行时日志
 		elif "win" in platform:
 			self.runtime_path = environ["TEMP"] + "\\parse-runtime.log"
 		else:
@@ -215,9 +215,7 @@ class Submit(object):
 					self.errmsg += str(datetime.now()) + "\tMail send success.\n"
 				except:
 					self.errmsg += str(datetime.now()) + "\tMail send failure.\n"
-				self.smtpObj.quit()
 			self.runtime.write(bytes(self.errmsg + "\n====\t====\t====\n", encoding = "UTF-8"))
-		self.runtime.close()
 		print("\033[1;32mAll Done.\033[0m")
 		return None
 
