@@ -1,7 +1,9 @@
 # 简介
 这是一个易班APP的打卡API的整合仓库<br>
-你可以使用 `parse.py` 来进行某些操作<br>
-就目前而言，~只支持 `Linux` 分支系统~ 新增Windows支持<br>
+~你可以使用 `parse.py` 来进行某些操作~<br>
+就目前而言，~只支持 `Linux` 分支系统~ <br>
+新增Windows支持<br>
+重写架构，现在运行速度相比以前提高2倍或更多!<br>
 
 # 功能更新日志
 - 2022年9月7日
@@ -15,21 +17,14 @@
 `Clone` 该仓库或下载仓库 `parse.py` 的raw到本地。<br>
 使用前请确保您的工作环境具有
 `python3-pip` 的软件包: `requests` , `pycryptodome` , `json` ,
-~ `selenium` ~ , `base64` , `urllib` <br>
-然后在您的工作目录新建 `<item>-run.py` <br>
-并且键入: <br>
+~`selenium`~ , `base64` , `urllib` <br>
+然后打开项目地址 `run.py` <br>
+并且修改ID部分字典: <br>
 ```python
-from parse import Parse
-a = Parse(account = <Your Account>,
-	password = <Your Password>,
-	server_mail = <Your sender email>,
-	email_key = <Sender email login token>,
-	client_mail = <Receiver email>
-)
-
-a.run() # Just <Parse(obj).run()> to running now
+ID = {
+    "你的登录账号": "登录密码" # More
+}
 ```
-**以上示例已经废除，具体请看 `run.py` 里的介绍** <br>
 如果运行成功，程序将会在您的 `/tmp` 目录输出 `parse-runtime.log` 日志。<br>
 如果您在运行时日志 `parse-runtime.log` 中看到错误信息，请配合 `/tmp/parse-run.log`
 来查阅并解决错误。<br>
@@ -67,7 +62,7 @@ $> crontab -e
 >> - A: 前提需要你安装了 `Python 3.5 +` 然后输入 `pip3 install <package>`
 
 > Q: 支持 `Windows` 吗?
->> - A: 暂时没有时间，您可以自行修改适配 `Windows` 代码量几分钟就能完成
+>> - A: 已经成功支持
 
 > Q: 为什么不在 `parse.py` 中写注释?
 >> - A: ~抱歉，因为我实在没时间，后面一定加上~ </br>
@@ -80,7 +75,7 @@ $> crontab -e
 >> - A: 是的，所以我的项目中大部分的设定都是围绕着我们学校来的
 
 > Q: 作者学号?
->> - A: 首先，我很能理解你想 ~ `感谢` ~ 我的心情。所以 你的好意我心领了
+>> - A: 首先，我很能理解你想 ~`感谢`~ 我的心情。所以 你的好意我心领了
 
 ---
 # 使用须知
