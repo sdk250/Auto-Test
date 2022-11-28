@@ -16,19 +16,21 @@ server_email_key = "Send email key"
 client_email = "Recv email"
 
 if __name__ == "__main__":
-	submit = Submit(name = None, longitude = "Your longitude", latitude = "Your latitude", address = "Your address for text")
-	cookies = Cookies()
 	errmsg = "\n"
 	for i in ID.keys():
-		_cookies = cookies._cookies(account = i, password = ID[i])
-		if isinstance(_cookies, dict):
-			task = submit.task(_cookies)
+		submit = Submit(name = None, longitude = "Your longitude", latitude = "Your latitude", address = "Your address for text")
+		_cookies = Cookies(account = i, password = ID[i])
+		if isinstance(_cookies.cookies, dict):
+			task = submit.task(_cookies.cookies)
 			if task == {}:
 				errmsg += i + "\tTask is None.\n"
 			for j in task.keys():
-				errmsg += submit.submit(name = i, taskId = j, title = task[j], cookies = cookies)
+				if "每日" in task[j]:
+					errmsg += submit.submit(name = i, taskId = j, title = task[j], cookies = _cookies.cookies)
+				else:
+					errmsg += "\tInvild item.\n"
 		else:
-			errmsg += _cookies
+			errmsg += _cookies.cookies
 	if errmsg != "\n":
 		smtp_host = "smtp.qq.com" # Only supported QQ email
 		smtp_port = 465 # QQ邮箱的SMTP服务端口号
