@@ -35,7 +35,7 @@ class Cookies(object):
 	def _cookies(self, account : str, password : str):
 		self.get_cookies_count += 1
 		if self.get_cookies_count > 10:
-			self.errmsg += "\nGET COOKIES ERROR.\n"
+			self.errmsg += "\tGET COOKIES ERROR.\n"
 			return self.errmsg
 		self.errmsg = "\n"
 		self.csrf = md5(str(datetime.now()).encode("UTF-8")).hexdigest()

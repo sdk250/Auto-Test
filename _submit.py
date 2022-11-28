@@ -151,7 +151,6 @@ class Submit(object):
 				"CCPersonId": []
 			}, ensure_ascii = False)
 		}, self.key, self.iv)
-		self.headers.update(Referer = "https://app.uyiban.com/", Origin = "https://app.uyiban.com")
 		self.headers["Content-Length"] = str(len(data))
 		submit = self.session.post(
 			url = "https://api.uyiban.com/workFlow/c/my/apply",
@@ -186,6 +185,7 @@ class Submit(object):
 			runtime.write(bytes(errmsg, encoding = "UTF-8"))
 		print("\033[1;32mAll Done.\033[0m")
 		runtime.close()
+		del self.headers["Content-Length"]
 		return errmsg
 
 	def encrypto_data(self, data, key, iv):
