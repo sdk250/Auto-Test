@@ -1,7 +1,7 @@
 from _cookies import Cookies
-from os.path import exists
-from os import remove
-from re import compile
+# from os.path import exists
+# from os import remove
+# from re import compile
 from datetime import datetime
 from _submit import Submit
 from email.mime.text import MIMEText
