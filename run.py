@@ -11,9 +11,10 @@ from smtplib import SMTP_SSL
 ID = {
 	"Account": "Password" # 多账号支持
 }
-server_email = "Send email"
-server_email_key = "Send email key"
-client_email = "Recv email"
+email_server = False # 如果设置为True，则必须填写下面三项
+# server_email = "Send email"
+# server_email_key = "Send email key"
+# client_email = "Recv email"
 
 if __name__ == "__main__":
 	errmsg = "\n"
@@ -31,7 +32,7 @@ if __name__ == "__main__":
 					errmsg += "\tInvild item.\n"
 		else:
 			errmsg += _cookies.cookies
-	if errmsg != "\n":
+	if errmsg != "\n" and email_server:
 		smtp_host = "smtp.qq.com" # Only supported QQ email
 		smtp_port = 465 # QQ邮箱的SMTP服务端口号
 		smtpObj = SMTP_SSL(smtp_host) # 初始化QQ邮箱SSL加密通道
@@ -47,4 +48,4 @@ if __name__ == "__main__":
 		except:
 			errmsg += str(datetime.now()) + "\tMail send failure.\n"
 		smtpObj.close()
-		print(errmsg)
+	print(errmsg)
