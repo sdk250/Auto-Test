@@ -60,19 +60,19 @@ class Cookies(object):
 		cipher = PKCS1_v1_5.new(RSA.importKey(compile("id=\"key\" ?value=\"?([0-9a-zA-Z -_/=+\n]+[^\"])\"? ").findall(result.text)[0]))
 		waf = compile("https_waf_cookie=([0-9a-zA-Z-_]+);{1}").findall(result.headers["Set-Cookie"])[0]
 		_YB = compile("_YB_OPEN_V2_0=([0-9a-zA-Z-_]+);{1}").findall(result.headers["Set-Cookie"])[0]
-		_X = compile("_X=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-		_Y = compile("_Y=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-		_Z = compile("_Z=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-		_C = compile("_C=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
-		_S = compile("_S=([0-9a-zA-Z]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		# _X = compile("_X=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		# _Y = compile("_Y=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		# _Z = compile("_Z=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		# _C = compile("_C=([0-9]+);{1}").findall(result.headers["Set-Cookie"])[0]
+		# _S = compile("_S=([0-9a-zA-Z]+);{1}").findall(result.headers["Set-Cookie"])[0]
 		self.session.cookies = utils.cookiejar_from_dict({
 			"https_waf_cookie": waf,
 			"_YB_OPEN_V2_0": _YB,
-			"_X": _X,
-			"_Y": _Y,
-			"_Z": _Z,
-			"_C": _C,
-			"_S": _S
+			# "_X": _X,
+			# "_Y": _Y,
+			# "_Z": _Z,
+			# "_C": _C,
+			# "_S": _S
 		})
 		password = quote(b64encode(cipher.encrypt(bytes(password, encoding = "UTF-8"))))
 		self.headers.update(Referer = result.url, Origin = "https://oauth.yiban.cn")
