@@ -9,7 +9,7 @@ from email.header import Header
 from smtplib import SMTP_SSL
 
 ID = {
-    "Account": "Password" # 多账号支持
+	"Account": "Password" # 多账号支持
 }
 email_server = False # 如果设置为True，则必须填写下面三项
 # server_email = "Send email"
