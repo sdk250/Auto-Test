@@ -4,6 +4,8 @@ from _cookies import Cookies
 # from re import compile
 from datetime import datetime
 from _submit import Submit
+from sys import platform
+from os import environ
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTP_SSL
@@ -15,6 +17,13 @@ email_server = False # 如果设置为True，则必须填写下面三项
 # server_email = "Send email"
 # server_email_key = "Send email key"
 # client_email = "Recv email"
+if "linux" in platform:
+	runtime_path = "/tmp/parse-runtime.log" # 运行时日志
+elif "win" in platform:
+	runtime_path = environ["TEMP"] + "\\parse-runtime.log"
+else:
+	print("Cannot find your operating system")
+	quit()
 
 if __name__ == "__main__":
 	errmsg = "\n"
@@ -36,6 +45,9 @@ if __name__ == "__main__":
 		else:
 			errmsg += _cookies.cookies
 	if errmsg != "\n":
+		print(errmsg)
+		with open(runtime_path, "a+") as fd:
+			fd.write(errmsg)
 		if email_server:
 			smtp_host = "smtp.qq.com" # Only supported QQ email
 			smtp_port = 465 # QQ邮箱的SMTP服务端口号
@@ -52,4 +64,4 @@ if __name__ == "__main__":
 			except:
 				errmsg += str(datetime.now()) + "\tMail send failure.\n"
 			smtpObj.close()
-		print(errmsg)
+		
