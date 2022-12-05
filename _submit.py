@@ -12,15 +12,9 @@ from Crypto.Cipher import AES
 from base64 import b64encode
 
 class Submit(object):
-	def __init__(self, name : str, longitude : str, latitude : str, address : str):
+	def __init__(self, runtime_path : str, name : str, longitude : str, latitude : str, address : str):
 		self.__version = "1.0.6"
-		if "linux" in platform:
-			self.runtime_path = "/tmp/parse-runtime.log" # 运行时日志
-		elif "win" in platform:
-			self.runtime_path = environ["TEMP"] + "\\parse-runtime.log"
-		else:
-			print("Cannot find your operating system")
-			quit()
+		self.runtime_path = runtime_path
 		self.name = name
 		self.key = "2knV5VGRTScU7pOq"
 		self.iv = "UmNWaNtM0PUdtFCs"

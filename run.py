@@ -4,31 +4,15 @@ from _cookies import Cookies
 # from re import compile
 from datetime import datetime
 from _submit import Submit
-from sys import platform
-from os import environ
+from config import ID, email_server, server_email, server_email_key, client_email, global_longitude, global_latitude, global_address, runtime_path
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTP_SSL
 
-ID = {
-	"Account": "Password" # 多账号支持
-}
-email_server = False # 如果设置为True，则必须填写下面三项
-# server_email = "Send email"
-# server_email_key = "Send email key"
-# client_email = "Recv email"
-if "linux" in platform:
-	runtime_path = "/tmp/parse-runtime.log" # 运行时日志
-elif "win" in platform:
-	runtime_path = environ["TEMP"] + "\\parse-runtime.log"
-else:
-	print("Cannot find your operating system")
-	quit()
-
 if __name__ == "__main__":
 	errmsg = "\n"
 	for i in ID.keys():
-		submit = Submit(name = None, longitude = "Your longitude", latitude = "Your latitude", address = "Your address for text")
+		submit = Submit(runtime_path = runtime_path, name = None, longitude = global_longitude, latitude = global_latitude, address = global_address)
 		try:
 			_cookies = Cookies(account = i, password = ID[i])
 		except:
