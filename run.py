@@ -33,6 +33,7 @@ if __name__ == "__main__":
 			_cookies = Cookies(account = i, password = ID[i])
 		except:
 			errmsg += i + "\tGet cookies failure.\n"
+			continue
 		if isinstance(_cookies.cookies, dict):
 			task = submit.task(_cookies.cookies)
 			if task == {}:
