@@ -75,10 +75,7 @@ class Parse(object):
 
 		self.date = datetime.now().strftime("%Y-%m-%d %H:%M")
 		print(str(self.date))
-		self.user_agent = "Mozilla/5.0 (iPhone; XT2201-2 " \
-			"Build/S1SC32.52-69-24; wv) AppleWebKit/537.36 " \
-			"(KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 " \
-			"Mobile Safari/537.36;webank/h5face;webank/1.0 yiban_iOS/5.0.12"
+		self.user_agent = None
 		self.headers = {
 			"User-Agent": self.user_agent,
 			"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
