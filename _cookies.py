@@ -10,18 +10,8 @@ from base64 import b64encode
 from js2py import eval_js
 
 class Cookies(object):
-	def __init__(self, account : str = None, password : str = None):
-		self.headers = {
-			"User-Agent": "Mozilla/5.0 (iPhone; XT2201-2 " \
-				"Build/S1SC32.52-69-24; wv) AppleWebKit/537.36 " \
-				"(KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 " \
-				"Mobile Safari/537.36;webank/h5face;webank/1.0 yiban_iOS/5.0.12",
-			"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-			"X-Requested-With": "com.yiban.app",
-			"Origin": "https://app.uyiban.com",
-			"Referer": "https://app.uyiban.com/",
-			"Connection": "Close"
-		}
+	def __init__(self, headers : dict, account : str = None, password : str = None):
+		self.headers = headers
 		self.errmsg = None
 		self.get_cookies_count = 0
 		self.session = session()

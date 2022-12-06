@@ -12,7 +12,7 @@ from Crypto.Cipher import AES
 from base64 import b64encode
 
 class Submit(object):
-	def __init__(self, runtime_path : str, name : str, longitude : str, latitude : str, address : str):
+	def __init__(self, headers : dict, runtime_path : str, name : str, longitude : str, latitude : str, address : str):
 		self.__version = "1.0.6"
 		self.runtime_path = runtime_path
 		self.name = name
@@ -39,17 +39,7 @@ class Submit(object):
 			self._month = int(self.month)
 			self._day = int(self.day) - 10
 
-		self.headers = {
-			"User-Agent": "Mozilla/5.0 (iPhone; XT2201-2 " \
-				"Build/S1SC32.52-69-24; wv) AppleWebKit/537.36 " \
-				"(KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 " \
-				"Mobile Safari/537.36;webank/h5face;webank/1.0 yiban_iOS/5.0.12",
-			"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-			"X-Requested-With": "com.yiban.app",
-			"Origin": "https://app.uyiban.com",
-			"Referer": "https://app.uyiban.com/",
-			"Connection": "Close"
-		}
+		self.headers = headers
 
 	def task(self, cookies : dict):
 		self.session.cookies = utils.cookiejar_from_dict(cookies)

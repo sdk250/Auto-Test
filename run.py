@@ -4,7 +4,7 @@ from _cookies import Cookies
 # from re import compile
 from datetime import datetime
 from _submit import Submit
-from config import ID, email_server, server_email, server_email_key, client_email, global_longitude, global_latitude, global_address, runtime_path
+from config import ID, email_server, server_email, server_email_key, client_email, global_longitude, global_latitude, global_address, global_headers, runtime_path
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTP_SSL
@@ -12,9 +12,9 @@ from smtplib import SMTP_SSL
 if __name__ == "__main__":
 	errmsg = "\n"
 	for i in ID.keys():
-		submit = Submit(runtime_path = runtime_path, name = None, longitude = global_longitude, latitude = global_latitude, address = global_address)
+		submit = Submit(headers = global_headers, runtime_path = runtime_path, name = None, longitude = global_longitude, latitude = global_latitude, address = global_address)
 		try:
-			_cookies = Cookies(account = i, password = ID[i])
+			_cookies = Cookies(headers = global_headers, account = i, password = ID[i])
 		except:
 			errmsg += i + "\tGet cookies failure.\n"
 			continue
