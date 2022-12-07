@@ -12,7 +12,7 @@ from Crypto.Cipher import AES
 from base64 import b64encode
 
 class Submit(object):
-	def __init__(self, headers : dict, runtime_path : str, name : str, longitude : str, latitude : str, address : str):
+	def __init__(self, headers : dict, runtime_path : str, name : str, longitude : str, latitude : str, address : str, info : dict):
 		self.__version = "1.0.6"
 		self.runtime_path = runtime_path
 		self.name = name
@@ -21,6 +21,7 @@ class Submit(object):
 		self.longitude = longitude # 经度
 		self.latitude = latitude # 纬度
 		self.address = address # 在地图上的文字信息
+		self.info = info
 		self.session = session() # 请求会话
 		self.year = str(datetime.now().year)
 		self.month = str(datetime.now().strftime("%m"))
@@ -100,10 +101,10 @@ class Submit(object):
 		data = "Str=" + self.encrypto_data({
 			"WFId": wfid["WFId"],
 			"Data": dumps({
-				quest[1]["id"]: "是",
-				quest[2]["id"]: str(round((36 + uniform(0, 1)), 1)), # 随机体温值 (36.0 ~ 36.9)
-				quest[3]["id"]: ["以上都无"],
-				quest[4]["id"]: "好",
+				quest[1]["id"]: self.info["returnSchool"],
+				quest[2]["id"]: self.info["temperature"],
+				quest[3]["id"]: self.info["state"],
+				quest[4]["id"]: self.info["mood"],
 				quest[5]["id"]: {
 					"time": self.date,
 					"longitude": self.longitude,
