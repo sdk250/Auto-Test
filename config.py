@@ -1,5 +1,6 @@
 from sys import platform
 from os import environ
+from random import uniform
 
 if "linux" in platform:
 	runtime_path = "/tmp/parse-runtime.log" # 运行时日志
@@ -16,6 +17,13 @@ ID = {
 global_longitude = "Your global longitude"
 global_latitude = "Your global latitude"
 global_address = "Your address for text"
+
+info = {
+	"returnSchool": "是", # 是否返校
+	"temperature": str(round((36 + uniform(0, 0.9)), 1)), # 随机体温值
+	"state": ["以上都无"], # 您当前的状态
+	"mood": "好" # 心情如何
+}
 
 global_headers = {
 	"User-Agent": "Mozilla/5.0 (iPhone; XT2201-2 " \
