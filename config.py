@@ -12,39 +12,26 @@ else:
 
 ID = {
 	"Account": {
-		"longitude": "Your longitude",
-		"latitude": "Your latitude",
-		"address": "Your address for text",
-		"info": {
-			"returnSchool": "是",
-			"temperature": str(round((36 + uniform(0, 0.9)), 1)),
-			"state": ["以上都无"],
-			"mood": "好"
-		},
-		"email_server": False, # 如果设置为True，则必须填写下面三项
+		# "longitude": "Your longitude",
+		# "latitude": "Your latitude",
+		# "address": "Your address for text",
+		# "info": {
+		# 	"returnSchool": "是",
+		# 	"temperature": str(round((36 + uniform(0, 0.9)), 1)),
+		# 	"state": ["以上都无"],
+		# 	"mood": "好"
+		# },
+		# "email_server": False, # 如果设置为True，则必须填写下面三项
 		# "server_email": "Send email",
 		# "server_email_key": "Send email key",
-		"client_email": "Recv email",
-		# 取消注释则优先使用
+		# "client_email": "Recv email",
+		# 取消注释则优先使用，否则使用全局变量
 		"passwd": "Password" # 多账号支持
 	},
 	"Account2": {
-		"longitude": "Your longitude2",
-		"latitude": "Your latitude2",
-		"address": "Your address for text2",
-		"info": {
-			"returnSchool": "是",
-			"temperature": str(round((36 + uniform(0, 0.9)), 1)),
-			"state": ["以上都无"],
-			"mood": "好"
-		},
-		"email_server": False, # 如果设置为True，则必须填写下面三项
-		"server_email": "Send email",
-		# "server_email_key": "Send email key",
-		"client_email": "Recv email2",
-		# 取消注释则优先使用
-		"passwd": "Password2" # 多账号支持
+		"passwd": "Password2"
 	}
+	# 多账号支持
 }
 
 global_longitude = "Your global longitude"
