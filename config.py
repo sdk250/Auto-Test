@@ -26,7 +26,7 @@ ID = {
 		# "server_email_key": "Send email key",
 		# "client_email": "Recv email",
 		# 取消注释则优先使用，否则使用全局变量
-		"passwd": "Password" # 多账号支持
+		"passwd": "Password"
 	},
 	"Account2": {
 		"passwd": "Password2"
