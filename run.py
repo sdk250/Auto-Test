@@ -16,8 +16,8 @@ def set_val(obj : dict, des : str):
 	else:
 		val = config.global_longitude
 if __name__ == "__main__":
-	errmsg = "\n"
 	for i in config.ID.keys():
+		errmsg = "\n"
 		if "longitude" in config.ID[i].keys():
 			longitude = config.ID[i]["longitude"]
 		else:
