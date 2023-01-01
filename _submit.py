@@ -110,7 +110,8 @@ class Submit(object):
 					"longitude": self.longitude,
 					"latitude": self.latitude,
 					"address": self.address
-				}
+				},
+				quest[6]["id"]: self.info["other"]
 			}, ensure_ascii = False),
 			"WfprocessId": processId,
 			"Extend": dumps({

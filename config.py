@@ -42,7 +42,8 @@ global_info = {
 	"returnSchool": "是", # 是否返校
 	"temperature": str(round((36 + uniform(0, 0.9)), 1)), # 随机体温值
 	"state": ["以上都无"], # 您当前的状态
-	"mood": "好" # 心情如何
+	"mood": "好", # 心情如何
+	"other": "无。" # 其他情况
 }
 
 global_headers = {
