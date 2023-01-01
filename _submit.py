@@ -34,9 +34,10 @@ class Submit(object):
 			self._month = int(self.month) - 1
 			if self._month == 0:
 				self._month = 12
-				self.year = int(self.year) - 1
+				self._year = int(self.year) - 1
 			self._day = 30 + (int(self.day) - 10)
 		else:
+			self._year = int(self.year)
 			self._month = int(self.month)
 			self._day = int(self.day) - 10
 
@@ -49,7 +50,7 @@ class Submit(object):
 			self.session.get(
 				url = "https://api.uyiban.com/officeTask/client/index/uncompletedList",
 				params = {
-					"StartTime": str(self.year) + "-" + str(self._month) +
+					"StartTime": str(self._year) + "-" + str(self._month) +
 						"-" + str(self._day) + " 00:00",
 					"EndTime": self.year + "-" + self.month +
 						"-" + self.day + " 23:59",
