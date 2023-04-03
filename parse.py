@@ -1,3 +1,4 @@
+# 旧版本，将不会再更新，我只是留着做纪念
 from os import environ
 from urllib.parse import quote
 from Crypto.Cipher import AES

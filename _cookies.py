@@ -10,24 +10,22 @@ from base64 import b64encode
 from js2py import eval_js
 
 class Cookies(object):
-	def __init__(self, headers : dict, account : str = None, password : str = None):
+	def __init__(self, headers: dict, account: str = None, password: str = None):
 		self.headers = headers
-		self.errmsg = None
+		self.errmsg = "\n"
 		self.get_cookies_count = 0
 		self.session = session()
 		self.phpsessid = None
 		self.csrf = None
 		self.account = account
 		self.password = password
-		if self.account or self.password != None:
+		if self.account and self.password != None:
 			self.cookies = self._cookies(account = self.account, password = self.password)
 
-	def _cookies(self, account : str, password : str):
+	def _cookies(self, account: str, password: str) -> dict:
 		self.get_cookies_count += 1
-		if self.get_cookies_count > 10:
-			self.errmsg += "\tGET COOKIES ERROR.\n"
-			return self.errmsg
-		self.errmsg = "\n"
+		if self.get_cookies_count > 10: # 获取10次Cookie还不成功就报错
+			self.errmsg += f"{account}\tGET COOKIES ERROR.\n"
 		self.csrf = md5(str(datetime.now()).encode("UTF-8")).hexdigest()
 		self.session.cookies = utils.cookiejar_from_dict({
 			"csrf_token": self.csrf
@@ -69,8 +67,8 @@ class Cookies(object):
 		result = self.session.post(
 			url = "https://oauth.yiban.cn/code/usersure",
 			headers = self.headers,
-			data = "oauth_uname=" + account + "&oauth_upwd=" +
-				password +
+			data = "oauth_uname=" + account +
+				"&oauth_upwd=" + password +
 				"&client_id=95626fa3080300ea&redirect_uri=https%3A%2F%2Ff.yiban.cn%2Fiapp7463&state=&scope=1%2C2%2C3%2C4%2C&display=html",
 			allow_redirects = False
 		)
@@ -78,9 +76,8 @@ class Cookies(object):
 			"_YB_OPEN_V2_0": _YB
 		})
 		if "error" in loads(result.text)["reUrl"]:
-			self.errmsg += self.account + "\tLogin fail.\n"
+			self.errmsg += f"{account}\tLogin fail.\n"
 			self._cookies(account = account, password = self.password)
-			return self.errmsg
 		self.headers.update(Referer = "https://oauth.yiban.cn/")
 		del self.headers["Origin"]
 		result = self.session.get(
@@ -90,10 +87,9 @@ class Cookies(object):
 		)
 		if len(result.text) > 10:
 			a = self.ydclearance(result.text)
-			https_ydclearance = a[0]
 			self.session.cookies = utils.cookiejar_from_dict({
 				"_YB_OPEN_V2_0": _YB,
-				"https_ydclearance": https_ydclearance
+				"https_ydclearance": a[0]
 			})
 			self.headers.update(Referer = result.url, Origin = "https://f.yiban.cn")
 			result = self.session.get(
@@ -105,7 +101,7 @@ class Cookies(object):
 			self.session.cookies = utils.cookiejar_from_dict({
 				"_YB_OPEN_V2_0": _YB,
 				"https_waf_cookie": waf,
-				"https_ydclearance": https_ydclearance
+				"https_ydclearance": a[0]
 			})
 			self.headers.update(Referer = result.url)
 			del self.headers["Origin"]
@@ -149,9 +145,9 @@ class Cookies(object):
 				"is_certified": "1"
 			}
 		else:
-			return self.errmsg
+			return dict(errmsg = self.errmsg)
 
-	def ydclearance(self, text : str):
+	def ydclearance(self, text: str) -> list:
 		result = compile(r"(function ([a-z]{2,})\(.+) ?</script>").findall(text)
 		js_code = str(result[0][0])
 		js_code = js_code.replace(r'eval("qo=eval;qo(po);");', r"return po;")
