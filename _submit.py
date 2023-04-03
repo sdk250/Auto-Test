@@ -12,8 +12,7 @@ from Crypto.Cipher import AES
 from base64 import b64encode
 
 class Submit(object):
-	def __init__(self, headers : dict, runtime_path : str, name : str, longitude : str, latitude : str, address : str, info : dict):
-		self.__version = "1.0.6"
+	def __init__(self, headers: dict, runtime_path: str, name: str, longitude: str, latitude: str, address: str, info: dict):
 		self.runtime_path = runtime_path
 		self.name = name
 		self.key = "2knV5VGRTScU7pOq"
@@ -43,7 +42,7 @@ class Submit(object):
 
 		self.headers = headers
 
-	def task(self, cookies : dict):
+	def task(self, cookies: dict) -> dict:
 		self.session.cookies = utils.cookiejar_from_dict(cookies)
 		task = {}
 		for i in loads(
@@ -64,7 +63,7 @@ class Submit(object):
 		return task
 
 	# 获取任务细节和加密任务Key
-	def submit(self, name : str, taskId : str, title : str, cookies : dict):
+	def submit(self, name: str, taskId: str, title: str, cookies: dict) -> str:
 		runtime = open(self.runtime_path, "ab+")
 		errmsg = ""
 		self.session.cookies = utils.cookiejar_from_dict(cookies)
@@ -174,7 +173,7 @@ class Submit(object):
 		del self.headers["Content-Length"]
 		return errmsg
 
-	def encrypto_data(self, data, key, iv):
+	def encrypto_data(self, data: str, key: str, iv: str) -> str:
 		data = dumps(data, ensure_ascii = False).replace(" ", "")
 		res = sub(compile("(\d{4}-\d+-\d{2,}:\d{2,})"), str(self.date), data)
 		res = res + (
