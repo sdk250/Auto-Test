@@ -29,6 +29,7 @@ class Submit(object):
 		print(self.date)
 
 		# 月份进制的逻辑判断，防止一些没必要的BUG
+		self._year = int(self.year)
 		if int(self.day) < 10:
 			self._month = int(self.month) - 1
 			if self._month == 0:
