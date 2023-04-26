@@ -46,26 +46,25 @@ if __name__ == "__main__":
 				if "每日" in task[j]:
 					errmsg += submit.submit(name = i, taskId = j, title = task[j], cookies = _cookies.cookies)
 				else:
-					errmsg += f"{i}\tInvild item.\n"
+					errmsg += f"{i}\tInvalid item.\n"
 
 		if errmsg != "\n":
-			print(errmsg)
-			with open(config.runtime_path, "a+") as fd:
-				fd.write(errmsg)
 			if _config["email_server"]:
 				smtp_host = "smtp.qq.com" # Only supported QQ email
 				smtp_port = 465 # QQ邮箱的SMTP服务端口号
-				smtpObj = SMTP_SSL(smtp_host) # 初始化QQ邮箱SSL加密通道
-				smtpObj.connect(smtp_host, smtp_port)
-				smtpObj.login(_config["server_email"], _config["server_email_key"])
-				msg = MIMEText(errmsg, "plain", "UTF-8")
-				msg["From"] = Header("Server_Parse")
-				msg["To"] = Header("Client")
-				msg["Subject"] = Header("Error messages output!", "UTF-8")
 				try:
+					smtpObj = SMTP_SSL(smtp_host) # 初始化QQ邮箱SSL加密通道
+					smtpObj.connect(smtp_host, smtp_port)
+					smtpObj.login(_config["server_email"], _config["server_email_key"])
+					msg = MIMEText(errmsg, "plain", "UTF-8")
+					msg["From"] = Header("Server_Parse")
+					msg["To"] = Header("Client")
+					msg["Subject"] = Header("Error messages output!", "UTF-8")
 					smtpObj.sendmail(_config["server_email"], _config["client_email"], msg.as_string())
 					errmsg += f"{str(datetime.now())}\tMail send success.\n"
 				except:
 					errmsg += f"{str(datetime.now())}\tMail send failure.\n"
 				smtpObj.close()
-
+			print(errmsg)
+			with open(config.runtime_path, "a+") as fd:
+				fd.write(errmsg)
