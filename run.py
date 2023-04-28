@@ -57,8 +57,8 @@ if __name__ == "__main__":
 					smtpObj.connect(smtp_host, smtp_port)
 					smtpObj.login(_config["server_email"], _config["server_email_key"])
 					msg = MIMEText(errmsg, "plain", "UTF-8")
-					msg["From"] = Header("Server_Parse")
-					msg["To"] = Header("Client")
+					msg["From"] = Header(_config["server_email"])
+					msg["To"] = Header(_config["client_email"])
 					msg["Subject"] = Header("Error messages output!", "UTF-8")
 					smtpObj.sendmail(_config["server_email"], _config["client_email"], msg.as_string())
 					errmsg += f"{str(datetime.now())}\tMail send success.\n"
