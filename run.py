@@ -55,6 +55,7 @@ if __name__ == "__main__":
 				try:
 					smtpObj = SMTP_SSL(smtp_host) # 初始化QQ邮箱SSL加密通道
 					smtpObj.connect(smtp_host, smtp_port)
+					smtpObj.ehlo(smtp_host)
 					smtpObj.login(_config["server_email"], _config["server_email_key"])
 					msg = MIMEText(errmsg, "plain", "UTF-8")
 					msg["From"] = Header(_config["server_email"])
