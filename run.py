@@ -65,6 +65,7 @@ if __name__ == "__main__":
 					errmsg += f"{str(datetime.now())}\tMail send success.\n"
 				except:
 					errmsg += f"{str(datetime.now())}\tMail send failure.\n"
+				smtpObj.quit()
 				smtpObj.close()
 			print(errmsg)
 			with open(config.runtime_path, "a+") as fd:
