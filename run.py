@@ -1,7 +1,7 @@
-import _config as config
-from _cookies import Cookies
+import config
+from cookies import Cookies
 from datetime import datetime
-from _submit import Submit
+from submit import Submit
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTP_SSL
