@@ -22,11 +22,14 @@ class Cookies(object):
         if self.account and self.password != None:
             self.cookies = self._cookies(account = self.account, password = self.password)
             while self.cookies.get("errmsg") != None:
-                if self.get_cookies_count < 2:
+                if self.get_cookies_count < 1:
                     self.get_cookies_count += 1
                     self.cookies = self._cookies(account = self.account, password = self.password)
                 else:
                     break
+
+    def __del__(self):
+        self.session.close()
 
     def _cookies(self, account: str, password: str) -> dict:
         self.csrf = md5(str(datetime.now()).encode("UTF-8")).hexdigest()
@@ -140,6 +143,22 @@ class Cookies(object):
             headers = self.headers,
             allow_redirects = False
         )
+        i = 0
+        while "Set-Cookie" not in result.headers.keys():
+            if i < 5:
+                i += 1
+                result = self.session.get(
+                    url = "https://api.uyiban.com/base/c/auth/yiban",
+                    params = {
+                        "verifyRequest": verify_code,
+                        "CSRF": self.csrf
+                    },
+                    headers = self.headers,
+                    allow_redirects = False
+                )
+            else:
+                self.errmsg += f"{account}\tNO COOKIES RETURN\n"
+                break
         if self.errmsg == "\n":
             return {
                 "cpi": compile("cpi=([0-9a-zA-Z%]+[^;]);?").findall(result.headers["Set-Cookie"])[0],
