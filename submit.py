@@ -43,6 +43,9 @@ class Submit(object):
 
         self.headers = headers
 
+    def __del__(self):
+        self.session.close()
+
     def task(self, cookies: dict) -> dict:
         self.session.cookies = utils.cookiejar_from_dict(cookies)
         task = {}

@@ -25,22 +25,24 @@ if __name__ == "__main__":
             address = _config["address"],
             info = _config["info"]
         )
-        _cookies = Cookies(
+        cookies = Cookies(
             headers = config._global["headers"],
             account = i,
             password = config.ID[i]["passwd"]
         )
-        if "errmsg" in _cookies.cookies.keys():
-            errmsg += f"""{i}\t{_cookies.cookies["errmsg"]}\n"""
+        if "errmsg" in cookies.cookies.keys():
+            errmsg += f"""{i}\t{cookies.cookies["errmsg"]}\n"""
         else:
-            task = submit.task(_cookies.cookies)
+            task = submit.task(cookies.cookies)
             if task == {}:
                 errmsg += f"{i}\tTask is None.\n"
             for j in task.keys():
                 if "每日" in task[j]:
-                    errmsg += submit.submit(name = i, taskId = j, title = task[j], cookies = _cookies.cookies)
+                    errmsg += submit.submit(name = i, taskId = j, title = task[j], cookies = cookies.cookies)
                 else:
                     errmsg += f"{i}\tInvalid item.\n"
+
+        del submit, cookies
 
         if errmsg != "\n":
             print(errmsg)
