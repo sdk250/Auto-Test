@@ -2,7 +2,7 @@ from sys import platform
 from os import environ
 from random import uniform
 
-__version = "1.1.2"
+__version = "1.1.4"
 
 if "linux" in platform:
     runtime_path = "/tmp/parse-runtime.log" # 运行时日志

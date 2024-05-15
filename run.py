@@ -1,10 +1,10 @@
-import config
 from cookies import Cookies
 from datetime import datetime
 from submit import Submit
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTP_SSL
+import config
 
 if __name__ == "__main__":
     print(f"Version: {config.__version}")
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             password = config.ID[i]["passwd"]
         )
         if "errmsg" in cookies.cookies.keys():
-            errmsg += f"""{i}\t{cookies.cookies["errmsg"]}\n"""
+            errmsg += f'{i}\t{cookies.cookies["errmsg"]}\n'
         else:
             task = submit.task(cookies.cookies)
             if task == {}:

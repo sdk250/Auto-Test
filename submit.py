@@ -1,4 +1,5 @@
-from requests import session, utils
+from requests import session
+from requests.utils import cookiejar_from_dict
 from re import compile, sub
 from json import loads, dumps
 from sys import platform
@@ -47,7 +48,7 @@ class Submit(object):
         self.session.close()
 
     def task(self, cookies: dict) -> dict:
-        self.session.cookies = utils.cookiejar_from_dict(cookies)
+        self.session.cookies = cookiejar_from_dict(cookies)
         task = {}
         for i in loads(
             self.session.get(
@@ -70,7 +71,7 @@ class Submit(object):
     def submit(self, name: str, taskId: str, title: str, cookies: dict) -> str:
         runtime = open(self.runtime_path, "ab+")
         errmsg = ""
-        self.session.cookies = utils.cookiejar_from_dict(cookies)
+        self.session.cookies = cookiejar_from_dict(cookies)
         wfid = loads(
             self.session.get(
                 url = "https://api.uyiban.com/officeTask/client/index/detail",
@@ -124,12 +125,10 @@ class Submit(object):
                     {
                         "label": "任务名称",
                         "value": title
-                    },
-                    {
+                    }, {
                         "label": "发布机构",
                         "value": wfid["PubOrgName"]
-                    },
-                    {
+                    }, {
                         "label": "发布人",
                         "value": wfid["PubPersonName"]
                     }
@@ -196,3 +195,7 @@ class Submit(object):
             )
         )
         return quote(result.decode("UTF-8"))
+
+
+
+
