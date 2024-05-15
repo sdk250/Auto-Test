@@ -90,7 +90,6 @@ class Cookies(object):
         self.session.cookies = cookiejar_from_dict({
             "_YB_OPEN_V2_0": _YB
         })
-        print(result.content)
         if "error" in loads(result.text)["reUrl"]:
             self.errmsg += f"\n{account}\tLogin fail.\n"
             return dict(errmsg = self.errmsg)
