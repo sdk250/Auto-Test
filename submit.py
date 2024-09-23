@@ -1,120 +1,121 @@
-from requests import session
+from requests import Session
 from requests.utils import cookiejar_from_dict
 from re import compile, sub
 from json import loads, dumps
-from sys import platform
-from os import environ
+from os import path
 from random import uniform
-from datetime import datetime
-from email.mime.text import MIMEText
-from email.header import Header
+from datetime import datetime, timedelta
 from urllib.parse import quote
 from Crypto.Cipher import AES
 from base64 import b64encode
+from config import HEADERS, PATH
 
 class Submit(object):
-    def __init__(self, headers: dict, runtime_path: str, name: str, longitude: str, latitude: str, address: str, info: dict):
-        self.runtime_path = runtime_path
-        self.name = name
+    def __init__(self, cookies: dict, session = None):
+        self.headers = HEADERS
         self.key = "2knV5VGRTScU7pOq"
         self.iv = "UmNWaNtM0PUdtFCs"
-        self.longitude = longitude # 经度
-        self.latitude = latitude # 纬度
-        self.address = address # 在地图上的文字信息
-        self.info = info
-        self.session = session() # 请求会话
-        self.year = str(datetime.now().year)
-        self.month = str(datetime.now().strftime("%m"))
-        self.day = str(datetime.now().strftime("%d"))
-        self.date = str(datetime.now().strftime("%Y-%m-%d %H:%M"))
-        print(self.date)
-
-        # 月份进制的逻辑判断，防止一些没必要的BUG
-        self._year = int(self.year)
-        if int(self.day) < 10:
-            self._month = int(self.month) - 1
-            if self._month == 0:
-                self._month = 12
-                self._year = int(self.year) - 1
-            self._day = 30 + (int(self.day) - 10)
+        self.cookies = cookies
+        self.external_session = False
+        if session == None:
+            self.external_session = True
+            self.session = Session() # 请求会话
+            self.session.cookies = cookiejar_from_dict(self.cookies)
         else:
-            self._year = int(self.year)
-            self._month = int(self.month)
-            self._day = int(self.day) - 10
-
-        self.headers = headers
+            self.external_session = False
+            self.session = session
+        self.date = str(datetime.now().strftime('%Y-%m-%d %H:%M'))
 
     def __del__(self):
-        self.session.close()
+        if not self.external_session:
+            self.session.close()
 
-    def task(self, cookies: dict) -> dict:
-        self.session.cookies = cookiejar_from_dict(cookies)
-        task = {}
-        for i in loads(
+    def get(self) -> dict:
+        task = dict()
+        self.session.headers['Origin'] = 'https://app.uyiban.com'
+        self.session.headers['Referer'] = 'https://app.uyiban.com/'
+        result = loads(
             self.session.get(
-                url = "https://api.uyiban.com/officeTask/client/index/uncompletedList",
+                url = 'https://api.uyiban.com/officeTask/client/index/uncompletedList',
                 params = {
-                    "StartTime": str(self._year) + "-" + str(self._month) +
-                        "-" + str(self._day) + " 00:00",
-                    "EndTime": self.year + "-" + self.month +
-                        "-" + self.day + " 23:59",
-                    "CSRF": cookies["csrf_token"]
+                    'StartTime': datetime.strftime(
+                        datetime.now() - timedelta(days = 20),
+                        '%Y-%m-%d %H:%M'
+                    ),
+                    'EndTime': datetime.strftime(
+                        datetime.now() + timedelta(days = 5),
+                        '%Y-%m-%d %H:%M'
+                    ),
+                    'CSRF': self.cookies['csrf_token']
                 },
-                headers = self.headers,
                 allow_redirects = False
-            ).text
-        )["data"]:
-            task[i["TaskId"]] = i["Title"]
+            ).content
+        )
+        if result['code'] != 0: return dict(errmsg = result['msg'])
+        for i in result["data"]: task[i["TaskId"]] = i["Title"]
         return task
 
-    # 获取任务细节和加密任务Key
-    def submit(self, name: str, taskId: str, title: str, cookies: dict) -> str:
-        runtime = open(self.runtime_path, "ab+")
-        errmsg = ""
-        self.session.cookies = cookiejar_from_dict(cookies)
-        wfid = loads(
+    def get_wfid(self, taskId: str) -> dict:
+        return loads(
             self.session.get(
                 url = "https://api.uyiban.com/officeTask/client/index/detail",
                 params = {
                     "TaskId": taskId,
-                    "CSRF": cookies["csrf_token"]
+                    "CSRF": self.cookies['csrf_token']
                 },
-                headers = self.headers,
                 allow_redirects = False
-            ).text
-        )["data"]
+            ).content
+        )
+
+    def get_processid(self, wfid: str) -> str:
         processId = self.session.post(
             url = "https://api.uyiban.com/workFlow/c/my/getProcessDetail",
             params = {
-                "WFId": wfid["WFId"],
-                "CSRF": cookies["csrf_token"]
+                "WFId": wfid,
+                "CSRF": self.cookies['csrf_token']
             },
-            headers = self.headers,
             allow_redirects = False
         ).text
-        processId = compile("\"Id\": ?\"([0-9a-zA-Z-_]+[^\", ])\"?,?").findall(processId)[0]
-        quest = loads(
+        return compile(r'"Id": ?"([0-9a-zA-Z-_]+[^", ])"?,?').findall(processId)[0]
+
+    def get_task(self, wfid) -> dict:
+        return loads(
             self.session.get(
-                url = "https://api.uyiban.com/workFlow/c/my/form/" + wfid["WFId"],
+                url = f'https://api.uyiban.com/workFlow/c/my/form/{wfid}',
                 params = {
-                    "CSRF": cookies["csrf_token"]
+                    "CSRF": self.cookies["csrf_token"]
                 },
-                headers = self.headers,
                 allow_redirects = False
-            ).text
-        )["data"]["Form"]
-        data = "Str=" + self.encrypto_data({
-            "WFId": wfid["WFId"],
+            ).content
+        )['data']['Form']
+
+    # 获取任务细节和加密任务Key
+    def submit(self,
+        name: str,
+        wfid: dict,
+        quest: dict,
+        processId: str,
+        taskId: str,
+        title: str,
+        longitude: float,
+        latitude: float,
+        address: str,
+        returnSchool: str,
+        lock: any
+    ) -> str:
+        errmsg = ''
+        data = "Str=" + self.encrypt_data({
+            "WFId": wfid['WFId'],
             "Data": dumps({
-                quest[1]["id"]: self.info["returnSchool"],
-                quest[2]["id"]: self.info["temperature"],
-                quest[3]["id"]: self.info["state"],
-                quest[4]["id"]: self.info["mood"],
+                quest[1]["id"]: returnSchool,
+                quest[2]["id"]: str(round((36 + uniform(0, 0.9)), 1)),
+                quest[3]["id"]: ['以上都无'],
+                quest[4]["id"]: '好',
                 quest[5]["id"]: {
                     "time": self.date,
-                    "longitude": self.longitude,
-                    "latitude": self.latitude,
-                    "address": self.address
+                    "longitude": str(longitude),
+                    "latitude": str(latitude),
+                    "address": address
                 }
             }, ensure_ascii = False),
             "WfprocessId": processId,
@@ -143,15 +144,16 @@ class Submit(object):
         submit = self.session.post(
             url = "https://api.uyiban.com/workFlow/c/my/apply",
             params = {
-                "CSRF": cookies["csrf_token"]
+                "CSRF": self.cookies["csrf_token"]
             },
             headers = self.headers,
             data = data,
             allow_redirects = False
         ).text
         if loads(submit)["code"] == 0: # 请求成功
-            runtime.write(
-                bytes(
+            lock.acquire()
+            with open(path.join(PATH, 'run.log'), 'a+') as f:
+                f.write(
                     "\n====\t====\t====\n" +
                     "Date: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
                     "\nTitle: " + title +
@@ -160,25 +162,22 @@ class Submit(object):
                     "\nWFId: " + wfid["WFId"] +
                     "\nProcessId: " + processId +
                     "\nContent: " + wfid["Content"] +
-                    "\n====\t====\t====\n", encoding = "UTF-8"
+                    "\n====\t====\t====\n"
                 )
-            )
+            lock.release()
         else: # 请求失败
             errmsg += (
                 "\n====\t====\t====\n" +
                 "Submit error.\nLog: " + name + "\n" +
-                str(loads(submit)["code"]) + "\n" + loads(submit)["msg"] + 
+                str(loads(submit)["code"]) + "\n" + loads(submit)["msg"] +
                 "\n====\t====\t====\n"
             )
-            runtime.write(bytes(errmsg, encoding = "UTF-8"))
-        print("\033[1;32mAll Done.\033[0m")
-        runtime.close()
-        del self.headers["Content-Length"]
+        # print("\033[1;32mDone.\033[0m")
         return errmsg
 
-    def encrypto_data(self, data: str, key: str, iv: str) -> str:
+    def encrypt_data(self, data: str, key: str, iv: str) -> str:
         data = dumps(data, ensure_ascii = False).replace(" ", "")
-        res = sub(compile("(\d{4}-\d+-\d{2,}:\d{2,})"), str(self.date), data)
+        res = sub(compile(r'(\d{4}-\d+-\d{2,}:\d{2,})'), str(self.date), data)
         res = res + (
             AES.block_size - len(res.encode()) % AES.block_size
         ) * chr(
