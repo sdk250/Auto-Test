@@ -5,14 +5,14 @@ PATH = dirname(__file__)
 VERSION = '2.0.0'
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (iPhone; " \
-        "(KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 " \
-        "Mobile Safarh5/1.0 yiban_iOS/5.0.12",
-    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-    "X-Requested-With": "com.yiban.app",
-    "Origin": "https://app.uyiban.com",
-    "Referer": "https://app.uyiban.com/",
-    "Connection": "close"
+    'User-Agent': 'Mozilla/5.0 (iPhone; ' \
+        '(KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 ' \
+        'Mobile Safarh5/1.0 yiban_iOS/5.0.12',
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'X-Requested-With': 'com.yiban.app',
+    'Origin': 'https://app.uyiban.com',
+    'Referer': 'https://app.uyiban.com/',
+    'Connection': 'close'
 }
 
 ID = None

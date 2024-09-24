@@ -74,29 +74,29 @@ def process(account: str,
 
         if task.get('errmsg') != None:
             errmsg += f'{account} not found task.'
-        else:
-            for i,j in task.items():
-                if '每日' not in j:
-                    continue
-                wfid = submit.get_wfid(i)
-                if wfid['code'] != 0:
-                    errmsg += f'{account} not found wfid'
-                    wfid = submit.get_wfid(i)
-                processid = submit.get_processid(wfid['data']['WFId'])
-                task_detail = submit.get_task(wfid['data']['WFId'])
-                errmsg += submit.submit(
-                    account,
-                    wfid['data'],
-                    task_detail,
-                    processid,
-                    i,
-                    j,
-                    longitude,
-                    latitude,
-                    address,
-                    returnSchool,
-                    lock
-                )
+        # else:
+        #     for i,j in task.items():
+        #         if '每日' not in j:
+        #             continue
+        #         wfid = submit.get_wfid(i)
+        #         if wfid['code'] != 0:
+        #             errmsg += f'{account} not found wfid'
+        #             wfid = submit.get_wfid(i)
+        #         processid = submit.get_processid(wfid['data']['WFId'])
+        #         task_detail = submit.get_task(wfid['data']['WFId'])
+        #         errmsg += submit.submit(
+        #             account,
+        #             wfid['data'],
+        #             task_detail,
+        #             processid,
+        #             i,
+        #             j,
+        #             longitude,
+        #             latitude,
+        #             address,
+        #             returnSchool,
+        #             lock
+        #         )
 
 
     if errmsg != '':
@@ -150,7 +150,7 @@ if __name__ == "__main__":
             )
         ))
 
-    thread_count = 4
+    thread_count = 8
     started_threads = list()
     for i in range(len(threads) // thread_count):
         for j in range(thread_count):

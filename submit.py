@@ -13,8 +13,8 @@ from config import HEADERS, PATH
 class Submit(object):
     def __init__(self, cookies: dict, session = None):
         self.headers = HEADERS
-        self.key = "2knV5VGRTScU7pOq"
-        self.iv = "UmNWaNtM0PUdtFCs"
+        self.key = '2knV5VGRTScU7pOq'
+        self.iv = 'UmNWaNtM0PUdtFCs'
         self.cookies = cookies
         self.external_session = False
         self.session = None
@@ -28,6 +28,8 @@ class Submit(object):
             self.external_session = False
             self.session = session
         self.date = str(datetime.now().strftime('%Y-%m-%d %H:%M'))
+        self.session.headers['Origin'] = 'https://app.uyiban.com'
+        self.session.headers['Referer'] = 'https://app.uyiban.com/'
 
     def __del__(self):
         if not self.external_session:
@@ -35,8 +37,6 @@ class Submit(object):
 
     def get(self) -> dict:
         task = dict()
-        self.session.headers['Origin'] = 'https://app.uyiban.com'
-        self.session.headers['Referer'] = 'https://app.uyiban.com/'
         result = loads(
             self.session.get(
                 url = 'https://api.uyiban.com/officeTask/client/index/uncompletedList',
@@ -55,13 +55,13 @@ class Submit(object):
             ).content
         )
         if result['code'] != 0: return dict(errmsg = result['msg'])
-        for i in result["data"]: task[i["TaskId"]] = i["Title"]
+        for i in result['data']: task[i['TaskId']] = i['Title']
         return task
 
     def get_wfid(self, taskId: str) -> dict:
         return loads(
             self.session.get(
-                url = "https://api.uyiban.com/officeTask/client/index/detail",
+                url = 'https://api.uyiban.com/officeTask/client/index/detail',
                 params = {
                     'TaskId': taskId,
                     'CSRF': dict_from_cookiejar(self.session.cookies)['csrf_token']
@@ -72,10 +72,10 @@ class Submit(object):
 
     def get_processid(self, wfid: str) -> str:
         processId = self.session.post(
-            url = "https://api.uyiban.com/workFlow/c/my/getProcessDetail",
+            url = 'https://api.uyiban.com/workFlow/c/my/getProcessDetail',
             params = {
-                "WFId": wfid,
-                "CSRF": self.cookies['csrf_token']
+                'WFId': wfid,
+                'CSRF': self.cookies['csrf_token']
             },
             allow_redirects = False
         ).text
@@ -86,7 +86,7 @@ class Submit(object):
             self.session.get(
                 url = f'https://api.uyiban.com/workFlow/c/my/form/{wfid}',
                 params = {
-                    "CSRF": self.cookies["csrf_token"]
+                    'CSRF': self.cookies['csrf_token']
                 },
                 allow_redirects = False
             ).content
@@ -107,79 +107,79 @@ class Submit(object):
         lock: any
     ) -> str:
         errmsg = ''
-        data = "Str=" + self.encrypt_data({
-            "WFId": wfid['WFId'],
-            "Data": dumps({
-                quest[1]["id"]: returnSchool,
-                quest[2]["id"]: str(round((36 + uniform(0, 0.9)), 1)),
-                quest[3]["id"]: ['以上都无'],
-                quest[4]["id"]: '好',
-                quest[5]["id"]: {
-                    "time": self.date,
-                    "longitude": str(longitude),
-                    "latitude": str(latitude),
-                    "address": address
+        data = 'Str=' + self.encrypt_data({
+            'WFId': wfid['WFId'],
+            'Data': dumps({
+                quest[1]['id']: returnSchool,
+                quest[2]['id']: str(round((36 + uniform(0, 0.9)), 1)),
+                quest[3]['id']: ['以上都无'],
+                quest[4]['id']: '好',
+                quest[5]['id']: {
+                    'time': self.date,
+                    'longitude': str(longitude),
+                    'latitude': str(latitude),
+                    'address': address
                 }
             }, ensure_ascii = False),
-            "WfprocessId": processId,
-            "Extend": dumps({
-                "TaskId": taskId,
-                "title": "任务信息",
-                "content":[
+            'WfprocessId': processId,
+            'Extend': dumps({
+                'TaskId': taskId,
+                'title': '任务信息',
+                'content':[
                     {
-                        "label": "任务名称",
-                        "value": title
+                        'label': '任务名称',
+                        'value': title
                     }, {
-                        "label": "发布机构",
-                        "value": wfid["PubOrgName"]
+                        'label': '发布机构',
+                        'value': wfid['PubOrgName']
                     }, {
-                        "label": "发布人",
-                        "value": wfid["PubPersonName"]
+                        'label': '发布人',
+                        'value': wfid['PubPersonName']
                     }
                 ]
             }, ensure_ascii = False),
-            "CustomProcess": dumps({
-                "ApplyPersonIds": [],
-                "CCPersonId": []
+            'CustomProcess': dumps({
+                'ApplyPersonIds': [],
+                'CCPersonId': []
             }, ensure_ascii = False)
         }, self.key, self.iv)
-        self.headers["Content-Length"] = str(len(data))
+        self.headers['Content-Length'] = str(len(data))
         submit = self.session.post(
-            url = "https://api.uyiban.com/workFlow/c/my/apply",
+            url = 'https://api.uyiban.com/workFlow/c/my/apply',
             params = {
-                "CSRF": self.cookies["csrf_token"]
+                'CSRF': self.cookies['csrf_token']
             },
             headers = self.headers,
             data = data,
             allow_redirects = False
         ).text
-        if loads(submit)["code"] == 0: # 请求成功
+        if loads(submit)['code'] == 0: # 请求成功
             lock.acquire()
             with open(path.join(PATH, 'run.log'), 'a+') as f:
                 f.write(
-                    "\n====\t====\t====\n" +
-                    "Date: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
-                    "\nTitle: " + title +
-                    "\nAccount: " + name +
-                    "\nTaskId: " + taskId +
-                    "\nWFId: " + wfid["WFId"] +
-                    "\nProcessId: " + processId +
-                    "\nContent: " + wfid["Content"] +
-                    "\n====\t====\t====\n"
+                    '\n====\t====\t====\n' +
+                    'Date: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
+                    '\nTitle: ' + title +
+                    '\nAccount: ' + name +
+                    '\nTaskId: ' + taskId +
+                    '\nWFId: ' + wfid['WFId'] +
+                    '\nProcessId: ' + processId +
+                    '\nContent: ' + wfid['Content'] +
+                    '\n====\t====\t====\n'
                 )
             lock.release()
         else: # 请求失败
             errmsg += (
-                "\n====\t====\t====\n" +
-                "Submit error.\nLog: " + name + "\n" +
-                str(loads(submit)["code"]) + "\n" + loads(submit)["msg"] +
-                "\n====\t====\t====\n"
+                '\n====\t====\t====\n' +
+                'Submit error.\nLog: ' + name + '\n' +
+                str(loads(submit)['code']) + '\n' + loads(submit)['msg'] +
+                '\n====\t====\t====\n'
             )
         print(f'{name}\t\033[1;32mDone.\033[0m')
         return errmsg
 
     def encrypt_data(self, data: str, key: str, iv: str) -> str:
-        data = dumps(data, ensure_ascii = False).replace(" ", "")
+        data = dumps(data, ensure_ascii = False).replace(' ', '')
         res = sub(compile(r'(\d{4}-\d+-\d{2,}:\d{2,})'), str(self.date), data)
         res = res + (
             AES.block_size - len(res.encode()) % AES.block_size
@@ -187,16 +187,16 @@ class Submit(object):
             AES.block_size - len(res.encode()) % AES.block_size
         )
         cipher = AES.new(
-            key.encode("UTF-8"),
+            key.encode('UTF-8'),
             AES.MODE_CBC,
-            iv.encode("UTF-8")
+            iv.encode('UTF-8')
         )
         result = b64encode(
             b64encode(
-                cipher.encrypt(res.encode("UTF-8"))
+                cipher.encrypt(res.encode('UTF-8'))
             )
         )
-        return quote(result.decode("UTF-8"))
+        return quote(result.decode('UTF-8'))
 
 
 
