@@ -1,5 +1,5 @@
 from requests import Session
-from requests.utils import cookiejar_from_dict
+from requests.utils import cookiejar_from_dict, dict_from_cookiejar
 from re import compile, sub
 from json import loads, dumps
 from os import path
@@ -17,10 +17,13 @@ class Submit(object):
         self.iv = "UmNWaNtM0PUdtFCs"
         self.cookies = cookies
         self.external_session = False
+        self.session = None
         if session == None:
             self.external_session = True
             self.session = Session() # 请求会话
             self.session.cookies = cookiejar_from_dict(self.cookies)
+            self.session.keep_alive = False
+            self.session.headers = self.headers
         else:
             self.external_session = False
             self.session = session
@@ -60,8 +63,8 @@ class Submit(object):
             self.session.get(
                 url = "https://api.uyiban.com/officeTask/client/index/detail",
                 params = {
-                    "TaskId": taskId,
-                    "CSRF": self.cookies['csrf_token']
+                    'TaskId': taskId,
+                    'CSRF': dict_from_cookiejar(self.session.cookies)['csrf_token']
                 },
                 allow_redirects = False
             ).content
@@ -172,7 +175,7 @@ class Submit(object):
                 str(loads(submit)["code"]) + "\n" + loads(submit)["msg"] +
                 "\n====\t====\t====\n"
             )
-        # print("\033[1;32mDone.\033[0m")
+        print(f'{name}\t\033[1;32mDone.\033[0m')
         return errmsg
 
     def encrypt_data(self, data: str, key: str, iv: str) -> str:

@@ -12,7 +12,7 @@ HEADERS = {
     "X-Requested-With": "com.yiban.app",
     "Origin": "https://app.uyiban.com",
     "Referer": "https://app.uyiban.com/",
-    "Connection": "Close"
+    "Connection": "close"
 }
 
 ID = None

@@ -16,6 +16,7 @@ class Cookies(object):
         self.headers = HEADERS
         self.get_cookies_count = 0
         self.session = Session()
+        self.session.keep_alive = False
         self.phpsessid = None
         self.account = account
         self.password = password.encode('UTF-8')

@@ -50,7 +50,7 @@ def process(account: str,
         invalid_cookies = True
         cookies_obj = Cookies(account, password)
         cookies = cookies_obj.cookies
-        print("Cookies expired")
+        print(f'{account} Cookies expired.')
     else:
         cookies = loads(b64decode(_cookies))
     submit = None
@@ -72,33 +72,37 @@ def process(account: str,
             submit = Submit(cookies, cookies_obj.session if cookies_obj else None)
             task = submit.get()
 
-        for i,j in task.items():
-            if '每日' not in j:
-                continue
-            wfid = submit.get_wfid(i)
-            if wfid['code'] != 0:
+        if task.get('errmsg') != None:
+            errmsg += f'{account} not found task.'
+        else:
+            for i,j in task.items():
+                if '每日' not in j:
+                    continue
                 wfid = submit.get_wfid(i)
-            processid = submit.get_processid(wfid['data']['WFId'])
-            task_detail = submit.get_task(wfid['data']['WFId'])
-            errmsg += submit.submit(
-                account,
-                wfid['data'],
-                task_detail,
-                processid,
-                i,
-                j,
-                longitude,
-                latitude,
-                address,
-                returnSchool,
-                lock
-            )
+                if wfid['code'] != 0:
+                    errmsg += f'{account} not found wfid'
+                    wfid = submit.get_wfid(i)
+                processid = submit.get_processid(wfid['data']['WFId'])
+                task_detail = submit.get_task(wfid['data']['WFId'])
+                errmsg += submit.submit(
+                    account,
+                    wfid['data'],
+                    task_detail,
+                    processid,
+                    i,
+                    j,
+                    longitude,
+                    latitude,
+                    address,
+                    returnSchool,
+                    lock
+                )
 
 
     if errmsg != '':
         print(errmsg)
 
-        if email_server:
+        if False:
             smtp_host = "smtp.qq.com" # Only supported QQ email
             smtp_port = 465 # QQ邮箱的SMTP服务端口号
             try:
@@ -146,7 +150,7 @@ if __name__ == "__main__":
             )
         ))
 
-    thread_count = 8
+    thread_count = 4
     started_threads = list()
     for i in range(len(threads) // thread_count):
         for j in range(thread_count):
