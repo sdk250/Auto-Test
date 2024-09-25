@@ -21,7 +21,7 @@
 > 重写架构，现在程序使用多线程的方式运行，极大的提高了运行速度。账号信息采用数据库 `sqlite3` 记录，可以更方便的管理
 
 # 使用方法
-`Clone` 该仓库或下载仓库 `[releases](https://github.com/sdk250/Auto-Test/releases)` 到本地。<br>
+`Clone` 该仓库或下载仓库 [releases](https://github.com/sdk250/Auto-Test/releases) 到本地。<br>
 使用前请确保您的工作环境具有
 `python3-pip` 的软件包: `requests` , `pycryptodome` , `json` ,
 `js2py` , `base64` , `urllib` <br>
