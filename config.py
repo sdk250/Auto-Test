@@ -12,14 +12,15 @@ HEADERS = {
     'X-Requested-With': 'com.yiban.app',
     'Origin': 'https://app.uyiban.com',
     'Referer': 'https://app.uyiban.com/',
-    'Connection': 'close'
+    'Connection': 'Close'
 }
 
 ID = None
 
 with connect(join(PATH, 'config.db')) as db:
     cursor = db.cursor()
-    cursor.execute('SELECT Account,Password,Cookies,Longitude,' \
+    cursor.execute(
+        'SELECT Account,Password,Cookies,Longitude,' \
         'Latitude,Address,Inschool,Email,Email_server,' \
         'Server_key,Email_client FROM Info;')
     ID = cursor.fetchall()
