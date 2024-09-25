@@ -149,7 +149,6 @@ class Submit(object):
             params = {
                 'CSRF': self.cookies['csrf_token']
             },
-            headers = self.headers,
             data = data,
             allow_redirects = False
         ).content)
