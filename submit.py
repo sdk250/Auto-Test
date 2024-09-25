@@ -71,22 +71,23 @@ class Submit(object):
         )
 
     def get_processid(self, wfid: str) -> str:
-        processId = self.session.post(
-            url = 'https://api.uyiban.com/workFlow/c/my/getProcessDetail',
-            params = {
-                'WFId': wfid,
-                'CSRF': self.cookies['csrf_token']
-            },
-            allow_redirects = False
-        ).text
-        return compile(r'"Id": ?"([0-9a-zA-Z-_]+[^", ])"?,?').findall(processId)[0]
+        return loads(
+            self.session.post(
+                url = 'https://api.uyiban.com/workFlow/c/my/getProcessDetail',
+                params = {
+                    'WFId': wfid,
+                    'CSRF': dict_from_cookiejar(self.session.cookies)['csrf_token']
+                },
+                allow_redirects = False
+            ).content
+        )
 
     def get_task(self, wfid) -> dict:
         return loads(
             self.session.get(
                 url = f'https://api.uyiban.com/workFlow/c/my/form/{wfid}',
                 params = {
-                    'CSRF': self.cookies['csrf_token']
+                    'CSRF': dict_from_cookiejar(self.session.cookies)['csrf_token']
                 },
                 allow_redirects = False
             ).content
@@ -104,7 +105,7 @@ class Submit(object):
         latitude: float,
         address: str,
         returnSchool: str,
-        lock: any
+        lock
     ) -> str:
         errmsg = ''
         data = 'Str=' + self.encrypt_data({
@@ -143,8 +144,7 @@ class Submit(object):
                 'CCPersonId': []
             }, ensure_ascii = False)
         }, self.key, self.iv)
-        self.headers['Content-Length'] = str(len(data))
-        submit = self.session.post(
+        submit = loads(self.session.post(
             url = 'https://api.uyiban.com/workFlow/c/my/apply',
             params = {
                 'CSRF': self.cookies['csrf_token']
@@ -152,30 +152,35 @@ class Submit(object):
             headers = self.headers,
             data = data,
             allow_redirects = False
-        ).text
-        if loads(submit)['code'] == 0: # 请求成功
+        ).content)
+        if submit['code'] == 0: # 请求成功
             lock.acquire()
-            with open(path.join(PATH, 'run.log'), 'a+') as f:
-                f.write(
-                    '\n====\t====\t====\n' +
-                    'Date: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
-                    '\nTitle: ' + title +
-                    '\nAccount: ' + name +
-                    '\nTaskId: ' + taskId +
-                    '\nWFId: ' + wfid['WFId'] +
-                    '\nProcessId: ' + processId +
-                    '\nContent: ' + wfid['Content'] +
-                    '\n====\t====\t====\n'
-                )
+            f = open(path.join(PATH, 'run.log'), 'a+')
+            f.write(
+                '\n====\t====\t====\n' +
+                'Date: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
+                '\nTitle: ' + title +
+                '\nAccount: ' + name +
+                '\nTaskId: ' + taskId +
+                '\nWFId: ' + wfid['WFId'] +
+                '\nProcessId: ' + processId +
+                '\nContent: ' + wfid['Content'] +
+                '\nPubOrg: ' + wfid['PubOrgName'] +
+                '\nPubPerson: ' + wfid['PubPersonName'] +
+                '\n====\t====\t====\n'
+            )
+            f.close()
             lock.release()
+            print(f'{name}\t\033[1;32mDone.\033[0m')
         else: # 请求失败
             errmsg += (
                 '\n====\t====\t====\n' +
-                'Submit error.\nLog: ' + name + '\n' +
-                str(loads(submit)['code']) + '\n' + loads(submit)['msg'] +
+                'Submit error.' +
+                '\nAccount: ' + name +
+                '\nLog: \n' +
+                str(submit['code']) + '\n' + submit['msg'] +
                 '\n====\t====\t====\n'
             )
-        print(f'{name}\t\033[1;32mDone.\033[0m')
         return errmsg
 
     def encrypt_data(self, data: str, key: str, iv: str) -> str:
