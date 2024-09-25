@@ -32,7 +32,7 @@ sqlite3 config.db
 比如插入一条数据：<br>
 ```sql
 INSERT INTO Info (Account, Password) VALUES ('账号', '密码');
-- 你也可以更详细地插入一条数据：
+-- 你也可以更详细地插入一条数据：
 INSERT INTO Info (Account, Password, Longitude, Latitude, Address, Inschool, Email, Email_server, Server_key, Email_client) VALUES ('账号', '密码', 经度(例：100.123456), 维度(例：20.654321), '地址的文字表达', 是否返校(例：true), 邮件服务(例：false), '发件人', '发件人密钥', '收件人');
 ```
 当未指定其中的某个字段时，使用的值为全局配置（ `config.py` ）。
