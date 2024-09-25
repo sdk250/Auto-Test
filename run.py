@@ -62,47 +62,44 @@ def process(account: str,
             update_cookies(cookies)
         submit = Submit(cookies, cookies_obj.session if cookies_obj else None)
         task = submit.get()
-        if task.get('errmsg') != None:
-            del cookies_obj
-            del submit
-            del task
-            cookies_obj = Cookies(account, password)
-            cookies = cookies_obj.cookies
-            update_cookies(cookies)
-            submit = Submit(cookies, cookies_obj.session if cookies_obj else None)
-            task = submit.get()
 
         if task.get('errmsg') != None:
-            errmsg += f'{account} not found task.'
-        # else:
-        #     for i,j in task.items():
-        #         if '每日' not in j:
-        #             continue
-        #         wfid = submit.get_wfid(i)
-        #         if wfid['code'] != 0:
-        #             errmsg += f'{account} not found wfid'
-        #             wfid = submit.get_wfid(i)
-        #         processid = submit.get_processid(wfid['data']['WFId'])
-        #         task_detail = submit.get_task(wfid['data']['WFId'])
-        #         errmsg += submit.submit(
-        #             account,
-        #             wfid['data'],
-        #             task_detail,
-        #             processid,
-        #             i,
-        #             j,
-        #             longitude,
-        #             latitude,
-        #             address,
-        #             returnSchool,
-        #             lock
-        #         )
+            errmsg += f'{account}\t{task["errmsg"]}.\n'
+        else:
+            for i,j in task.items():
+                if '每日' not in j:
+                    continue
+                wfid = submit.get_wfid(i)
+                if wfid['code'] != 0:
+                    errmsg += f'{account}\twfid not found.\n'
+                else:
+                    task_detail = submit.get_task(wfid['data']['WFId'])
+                    processid = submit.get_processid(wfid['data']['WFId'])
+                    if processid['code'] != 0:
+                        errmsg += f'{account}\t{processid["msg"]}\n'
+                    else:
+                        errmsg += submit.submit(
+                            account,
+                            wfid['data'],
+                            task_detail,
+                            processid,
+                            i,
+                            j,
+                            longitude,
+                            latitude,
+                            address,
+                            returnSchool,
+                            lock
+                        )
+
+    del cookies_obj
+    del submit
 
 
     if errmsg != '':
         print(errmsg)
 
-        if False:
+        if email_server:
             smtp_host = "smtp.qq.com" # Only supported QQ email
             smtp_port = 465 # QQ邮箱的SMTP服务端口号
             try:
@@ -122,8 +119,9 @@ def process(account: str,
             smtpObj.close()
 
         lock.acquire()
-        with open(path.join(config.PATH, 'err.log'), "a+") as fd:
-            fd.write(errmsg)
+        fd = open(path.join(config.PATH, 'err.log'), "a+")
+        fd.write(errmsg)
+        fd.close()
         lock.release()
 
 if __name__ == "__main__":
