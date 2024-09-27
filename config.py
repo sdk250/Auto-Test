@@ -2,7 +2,7 @@ from os.path import dirname, join
 from sqlite3 import connect
 
 PATH = dirname(__file__)
-VERSION = '2.0.1'
+VERSION = '2.1.0'
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (iPhone; ' \
@@ -20,7 +20,7 @@ ID = None
 with connect(join(PATH, 'config.db')) as db:
     cursor = db.cursor()
     cursor.execute(
-        'SELECT Account,Password,Cookies,Longitude,' \
+        'SELECT Account,Password,Longitude,' \
         'Latitude,Address,Inschool,Email,Email_server,' \
         'Server_key,Email_client FROM Info;')
     ID = cursor.fetchall()

@@ -25,7 +25,6 @@ def update_cookies(cookies: dict) -> None:
 
 def process(account: str,
     password: str,
-    _cookies: bytes,
     longitude: float,
     latitude: float,
     address: str,
@@ -37,30 +36,13 @@ def process(account: str,
     lock: Lock
 ) -> None:
     errmsg = ''
-    invalid_cookies = False
-    cookies_obj = cookies = None
-    if not _cookies or \
-        loads(
-            b64decode(
-                unquote(
-                    loads(b64decode(_cookies))['cpi']
-                )
-            )
-        )['Expire'] < int(datetime.now().timestamp()):
-        invalid_cookies = True
-        cookies_obj = Cookies(account, password)
-        cookies = cookies_obj.cookies
-        print(f'{account} Cookies expired.')
-    else:
-        cookies = loads(b64decode(_cookies))
-    submit = None
+    cookies = submit = None
+    cookies = Cookies(account, password)
 
-    if not _cookies and cookies.get('errmsg') != None:
-        errmsg += cookies['errmsg']
+    if cookies.cookies.get('errmsg') != None:
+        errmsg += f'{account}\t{cookies.cookies["errmsg"]}.\n'
     else:
-        if invalid_cookies:
-            update_cookies(cookies)
-        submit = Submit(cookies, cookies_obj.session if cookies_obj else None)
+        submit = Submit(cookies.cookies, cookies.session)
         task = submit.get()
 
         if task.get('errmsg') != None:
@@ -92,7 +74,7 @@ def process(account: str,
                             lock
                         )
 
-    del cookies_obj
+    del cookies
     del submit
 
 
@@ -130,20 +112,19 @@ if __name__ == "__main__":
     threads = list()
     lock = Lock()
     for i in config.ID:
-        # Account,Password,Cookies,Longitude,Latitude,Address,Inschool,Email,Email_server,Server_key,Email_client,Lock
+        # Account,Password,Longitude,Latitude,Address,Inschool,Email,Email_server,Server_key,Email_client,Lock
         threads.append(Thread(
             target = process,
             args = (i[0],
                 i[1],
-                i[2],
-                config.GLOBAL['longitude'] if i[3] == None else i[3],
-                config.GLOBAL['latitude'] if i[4] == None else i[4],
-                config.GLOBAL['address'] if i[5] == None else i[5],
-                config.GLOBAL['returnSchool'] if i[6] == None else i[6],
-                config.GLOBAL['email'] if i[7] == None else i[7],
-                config.GLOBAL['server_email'] if i[8] == None else i[8],
-                config.GLOBAL['email_key'] if i[9] == None else i[9],
-                config.GLOBAL['client_email'] if i[10] == None else i[10],
+                config.GLOBAL['longitude'] if i[2] == None else i[2],
+                config.GLOBAL['latitude'] if i[3] == None else i[3],
+                config.GLOBAL['address'] if i[4] == None else i[4],
+                config.GLOBAL['returnSchool'] if i[5] == None else i[5],
+                config.GLOBAL['email'] if i[6] == None else i[6],
+                config.GLOBAL['server_email'] if i[7] == None else i[7],
+                config.GLOBAL['email_key'] if i[8] == None else i[8],
+                config.GLOBAL['client_email'] if i[9] == None else i[9],
                 lock
             )
         ))
