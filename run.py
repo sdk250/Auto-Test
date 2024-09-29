@@ -13,6 +13,8 @@ from sqlite3 import connect
 from urllib.parse import quote, unquote
 import config
 
+VERSION = '2.1.1'
+
 def update_cookies(cookies: dict) -> None:
     with connect('config.db') as db:
         cursor = db.cursor()
@@ -107,7 +109,7 @@ def process(account: str,
         lock.release()
 
 if __name__ == "__main__":
-    print(f"Version: {config.VERSION}")
+    print(f"Version: {VERSION}")
 
     threads = list()
     lock = Lock()

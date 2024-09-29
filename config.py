@@ -2,7 +2,6 @@ from os.path import dirname, join
 from sqlite3 import connect
 
 PATH = dirname(__file__)
-VERSION = '2.1.0'
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (iPhone; ' \

@@ -174,7 +174,8 @@ class Submit(object):
         else: # 请求失败
             errmsg += (
                 '\n====\t====\t====\n' +
-                'Submit error.' +
+                'Date: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
+                '\nSubmit error.' +
                 '\nAccount: ' + name +
                 '\nLog: \n' +
                 str(submit['code']) + '\n' + submit['msg'] +
