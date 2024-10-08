@@ -104,14 +104,14 @@ class Submit(object):
         longitude: float,
         latitude: float,
         address: str,
-        returnSchool: str,
+        returnSchool: bool,
         lock
     ) -> str:
         errmsg = ''
         data = 'Str=' + self.encrypt_data({
             'WFId': wfid['WFId'],
             'Data': dumps({
-                quest[1]['id']: returnSchool,
+                quest[1]['id']: '是' if returnSchool else '否',
                 quest[2]['id']: str(round((36 + uniform(0, 0.9)), 1)),
                 quest[3]['id']: ['以上都无'],
                 quest[4]['id']: '好',

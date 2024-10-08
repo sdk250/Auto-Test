@@ -13,7 +13,7 @@ from sqlite3 import connect
 from urllib.parse import quote, unquote
 import config
 
-VERSION = '2.1.1'
+VERSION = '2.1.2'
 
 def update_cookies(cookies: dict) -> None:
     with connect('config.db') as db:
@@ -30,7 +30,7 @@ def process(account: str,
     longitude: float,
     latitude: float,
     address: str,
-    returnSchool: str,
+    returnSchool: bool,
     email_server: bool,
     server_email: str,
     email_key: str,
