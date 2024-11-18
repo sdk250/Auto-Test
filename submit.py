@@ -19,24 +19,24 @@ class Submit(object):
         self.external_session = False
         self.session = None
         if session == None:
-            self.external_session = True
+            self.external_session = False
             self.session = Session() # 请求会话
             self.session.cookies = cookiejar_from_dict(self.cookies)
             self.session.keep_alive = False
             self.session.headers = self.headers
         else:
-            self.external_session = False
+            self.external_session = True
             self.session = session
         self.date = str(datetime.now().strftime('%Y-%m-%d %H:%M'))
-        self.session.headers['Origin'] = 'https://app.uyiban.com'
-        self.session.headers['Referer'] = 'https://app.uyiban.com/'
 
     def __del__(self):
-        if not self.external_session:
+        if self.external_session == False:
             self.session.close()
 
     def get(self) -> dict:
         task = dict()
+        self.session.headers['Origin'] = 'https://app.uyiban.com'
+        self.session.headers['Referer'] = 'https://app.uyiban.com/'
         result = loads(
             self.session.get(
                 url = 'https://api.uyiban.com/officeTask/client/index/uncompletedList',
@@ -59,6 +59,8 @@ class Submit(object):
         return task
 
     def get_wfid(self, taskId: str) -> dict:
+        self.session.headers['Origin'] = 'https://app.uyiban.com'
+        self.session.headers['Referer'] = 'https://app.uyiban.com/'
         return loads(
             self.session.get(
                 url = 'https://api.uyiban.com/officeTask/client/index/detail',
@@ -71,6 +73,8 @@ class Submit(object):
         )
 
     def get_processid(self, wfid: str) -> str:
+        self.session.headers['Origin'] = 'https://app.uyiban.com'
+        self.session.headers['Referer'] = 'https://app.uyiban.com/'
         return loads(
             self.session.post(
                 url = 'https://api.uyiban.com/workFlow/c/my/getProcessDetail',
@@ -83,6 +87,8 @@ class Submit(object):
         )
 
     def get_task(self, wfid) -> dict:
+        self.session.headers['Origin'] = 'https://app.uyiban.com'
+        self.session.headers['Referer'] = 'https://app.uyiban.com/'
         return loads(
             self.session.get(
                 url = f'https://api.uyiban.com/workFlow/c/my/form/{wfid}',
@@ -144,6 +150,8 @@ class Submit(object):
                 'CCPersonId': []
             }, ensure_ascii = False)
         }, self.key, self.iv)
+        self.session.headers['Origin'] = 'https://app.uyiban.com'
+        self.session.headers['Referer'] = 'https://app.uyiban.com/'
         submit = loads(self.session.post(
             url = 'https://api.uyiban.com/workFlow/c/my/apply',
             params = {

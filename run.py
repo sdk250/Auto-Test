@@ -13,7 +13,7 @@ from sqlite3 import connect
 from urllib.parse import quote, unquote
 import config
 
-VERSION = '2.1.2'
+VERSION = '2.5.0'
 
 def update_cookies(cookies: dict) -> None:
     with connect('config.db') as db:
@@ -46,7 +46,6 @@ def process(account: str,
     else:
         submit = Submit(cookies.cookies, cookies.session)
         task = submit.get()
-
         if task.get('errmsg') != None:
             errmsg += f'{account}\t{task["errmsg"]}.\n'
         else:
