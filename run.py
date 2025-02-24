@@ -13,7 +13,7 @@ from sqlite3 import connect
 from urllib.parse import quote, unquote
 import config
 
-VERSION = '2.5.0'
+VERSION = '2.5.1'
 
 def update_cookies(cookies: dict) -> None:
     with connect('config.db') as db:
@@ -50,7 +50,7 @@ def process(account: str,
             errmsg += f'{account}\t{task["errmsg"]}.\n'
         else:
             for i,j in task.items():
-                if '每日' not in j:
+                if '每日' not in j and '大三学生' not in j:
                     continue
                 wfid = submit.get_wfid(i)
                 if wfid['code'] != 0:
